@@ -1,0 +1,7 @@
+# Enxame — Defesa 360°
+
+Tower defense de navegador: bichos atacam de todos os lados, você constrói economia dentro da base e torres no anel de defesa.
+
+Jogue em https://td.magodainformatica.com.br
+
+Arquivo único (`index.html`), HTML5 Canvas + JavaScript, sem build.

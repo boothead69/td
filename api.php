@@ -3,7 +3,8 @@
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 
-$dataDir = dirname(__DIR__, 3);              // .../domains/magodainformatica.com.br
+$pos = strpos(__DIR__, '/public_html');      // pasta acima de public_html, nunca acessível pela web
+$dataDir = $pos !== false ? substr(__DIR__, 0, $pos) : dirname(__DIR__);
 $file    = $dataDir . '/enxame-ranking.json';
 $rlFile  = $dataDir . '/enxame-ratelimit.json';
 $KEEP    = 200;

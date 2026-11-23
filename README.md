@@ -4,4 +4,4 @@ Tower defense de navegador: bichos atacam de todos os lados, você constrói eco
 
 Jogue em https://td.magodainformatica.com.br
 
-HTML5 Canvas + JavaScript, sem build. `api.php` guarda o ranking num JSON fora da pasta pública. Música gerada com Web Audio.
+Three.js (r128, incluído em three.min.js) + JavaScript, sem build. `api.php` guarda o ranking num JSON fora da pasta pública. Música gerada com Web Audio.

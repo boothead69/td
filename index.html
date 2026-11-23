@@ -267,8 +267,8 @@ body.m #mSheet.open{transform:none}
     <h3>Bestiário</h3>
     <div id="beast"></div>
     <h3>Sinergias (torres encostadas, lado a lado)</h3>
-    <div class="syn"><b>Amplificador</b>: +20% de dano nas torres encostadas. Não soma com outro Amplificador.<br><b>Criogênica + Canhão</b>: o Canhão causa +50% em zumbis congelados.<br><b>Criogênica + Railgun</b>: Railgun dispara 25% mais rápido.<br><b>Metralhadora + Metralhadora</b>: +15% de cadência.</div>
-    <div class="help"><b>Clique</b> no botão e depois no mapa para construir · <b>clique numa construção</b> para melhorar · <b>botão direito / Esc</b> cancela · <b>1–9</b> construções · <b>Q W E R</b> habilidades · <b>Espaço</b> chama a onda · <b>Del</b> vende · <b>P</b> pausa · <b>F</b> velocidade · <b>N</b> noite · <b>M</b> som</div>
+    <div class="syn"><b>Amplificador</b>: +20% de dano nas torres encostadas. Não soma com outro Amplificador.<br><b>Criogênica + Canhão</b>: o Canhão causa +50% em zumbis congelados.<br><b>Criogênica + Railgun</b>: Railgun dispara 25% mais rápido.<br><b>Metralhadora + Metralhadora</b>: +15% de cadência.<br><b>Lente de foco</b>: torres encostadas +60% de dano e −35% de cadência. Boa para Railgun e Canhão, que vencem armadura com tiros fortes.<br><b>Acelerador</b>: zumbis no campo ficam mais rápidos e recebem +45% de dano. Coloque onde suas torres já concentram fogo.<br><b>Ideias de build</b>: horda com Tesla + Veneno + Canhão · tiro pesado com Lente + Railgun · cadência com Amplificador + Metralhadoras.</div>
+    <div class="help"><b>Clique</b> no botão e depois no mapa para construir · <b>clique numa construção</b> para melhorar · <b>botão direito / Esc</b> cancela · <b>1–0, Z X C</b> construções · <b>Q W E R</b> habilidades · <b>Espaço</b> chama a onda · <b>Del</b> vende · <b>P</b> pausa · <b>F</b> velocidade · <b>N</b> noite · <b>M</b> som</div>
   </aside>
 </div>
 
@@ -290,8 +290,13 @@ const DEFS={
   canhao:{name:'Canhão',zone:'def',cost:140,hp:220,range:4,rate:.7,dmg:45,splash:1.3,air:false,col:'#d7a86e',desc:'Área; não acerta voadores',light:80,lcol:'255,190,120'},
   railgun:{name:'Railgun',zone:'def',cost:240,hp:130,range:7.5,rate:.45,dmg:170,air:true,col:'#d68cff',desc:'Longo alcance, fura armadura',light:85,lcol:'214,140,255'},
   amp:{name:'Amplificador',zone:'def',cost:180,hp:90,desc:'Fortalece torres encostadas',light:75,lcol:'255,120,200'},
+  tesla:{name:'Tesla',zone:'def',cost:120,hp:150,range:3,rate:.9,dmg:14,air:true,col:'#7fd8ff',desc:'Raio em cadeia: até 5 zumbis',light:85,lcol:'130,210,255'},
+  veneno:{name:'Veneno',zone:'def',cost:110,hp:140,range:3.2,rate:.8,dmg:3,splash:1.2,air:false,col:'#8fe04a',desc:'Nuvem tóxica que se espalha',light:70,lcol:'150,230,80'},
+  foco:{name:'Lente de foco',zone:'def',cost:160,hp:90,desc:'Encostadas: +60% dano, −35% cadência',light:70,lcol:'255,180,80'},
+  acel:{name:'Acelerador',zone:'def',cost:130,hp:110,aura:3,desc:'Zumbis +35% rápidos e +45% de dano',light:80,lcol:'255,80,80'},
 };
-const ORDER=['fazenda','gerador','radar','muro','metral','crio','canhao','railgun','amp'];
+const ORDER=['fazenda','gerador','radar','muro','metral','crio','canhao','railgun','amp','tesla','veneno','foco','acel'];
+const KEYS=['1','2','3','4','5','6','7','8','9','0','Z','X','C'];
 
 // ---------- cartas (valem só na partida) ----------
 const CARDS={
@@ -362,6 +367,10 @@ const UPG={
   blast:{name:'Carga explosiva',desc:'+20% de raio da explosão',max:3,m:1.1},
   rail:{name:'Transpassar',desc:'Atravessa +1 zumbi por nível',max:3,m:1.2},
   power:{name:'Potência',desc:'+5% no bônus de dano do Amplificador',max:4,m:1},
+  chainup:{name:'Arco extra',desc:'O raio pula para +1 zumbi por nível',max:3,m:1.1},
+  toxina:{name:'Toxina',desc:'+40% de dano do veneno por nível',max:3,m:1.1},
+  lente:{name:'Lente polida',desc:'+10% no bônus de dano da Lente',max:3,m:1},
+  campo:{name:'Campo ampliado',desc:'+0,5 de raio e +10% de dano recebido',max:3,m:1},
 };
 const TRACKS={
   core:['dmg','range','rate','armor','income'],
@@ -371,19 +380,23 @@ const TRACKS={
   canhao:['dmg','range','rate','blast','detect','armor'],
   railgun:['dmg','range','rate','rail','detect','armor'],
   amp:['power','armor'],
+  tesla:['dmg','range','rate','chainup','detect','armor'],
+  veneno:['dmg','range','rate','toxina','detect','armor'],
+  foco:['lente','armor'],
+  acel:['campo','armor'],
 };
 
 const EN={
-  guerreiro:{name:'Guerreiro',bug:'Zumbi errante',hp:34,speed:34,dmg:8,rate:1.1,reward:3,r:11,first:1,eye:[.37,.11,'255,211,77'],gore:'#5a0d0d',desc:'Corpo a corpo, equilibrado.'},
-  agil:{name:'Ágil',bug:'Corredor',hp:22,speed:68,dmg:3,rate:4,reward:3,r:10,first:2,eye:[.36,.1,'255,59,59'],gore:'#5a0d0d',desc:'Corre e golpeia muito rápido.'},
-  arqueiro:{name:'Arqueiro',bug:'Cuspidor',hp:26,speed:30,dmg:9,rate:.7,range:2.6,reward:5,r:11,first:4,eye:[.42,.13,'198,255,58'],gore:'#3d5a0a',desc:'Vomita ácido de longe. Alcance menor que as torres.'},
+  guerreiro:{name:'Guerreiro',bug:'Zumbi errante',hp:17,speed:34,dmg:5,rate:1.1,reward:2,r:11,first:1,eye:[.37,.11,'255,211,77'],gore:'#5a0d0d',desc:'Corpo a corpo, equilibrado.'},
+  agil:{name:'Ágil',bug:'Corredor',hp:11,speed:68,dmg:2,rate:4,reward:2,r:10,first:2,eye:[.36,.1,'255,59,59'],gore:'#5a0d0d',desc:'Corre e golpeia muito rápido.'},
+  arqueiro:{name:'Arqueiro',bug:'Cuspidor',hp:15,speed:30,dmg:6,rate:.7,range:2.6,reward:3,r:11,first:4,eye:[.42,.13,'198,255,58'],gore:'#3d5a0a',desc:'Vomita ácido de longe. Alcance menor que as torres.'},
   tanque:{name:'Tanque',bug:'Brutamontes de choque',hp:220,speed:18,dmg:30,rate:.7,armor:6,reward:14,r:16,first:5,eye:[.33,.09,'127,208,255'],gore:'#4a0b0b',desc:'Armadura 6: tiro fraco quase não fere.'},
-  invisivel:{name:'Invisível',bug:'Espectro',hp:45,speed:40,dmg:10,rate:1,reward:8,r:11,invis:true,first:6,eye:[.37,.11,'255,111,224'],gore:'#3a5a6a',desc:'Só o QG, Radar, gelo ou torre com Detector enxergam.'},
-  vespa:{name:'Voador',bug:'Morcego infectado',hp:26,speed:52,dmg:6,rate:1.2,reward:5,r:11,fly:true,first:7,eye:[.62,.08,'255,60,60'],gore:'#3a1010',desc:'Voa por cima de tudo, direto no QG.'},
-  explosivo:{name:'Explosivo',bug:'Inchado',hp:40,speed:30,dmg:0,rate:1,reward:5,r:13,first:3,boom:1,eye:[.33,.1,'255,150,40'],gore:'#6b5a12',desc:'Explode ao morrer ou ao encostar e fere as construções em volta. Mate de longe.'},
+  invisivel:{name:'Invisível',bug:'Espectro',hp:28,speed:40,dmg:6,rate:1,reward:5,r:11,invis:true,first:6,eye:[.37,.11,'255,111,224'],gore:'#3a5a6a',desc:'Só o QG, Radar, gelo ou torre com Detector enxergam.'},
+  vespa:{name:'Voador',bug:'Morcego infectado',hp:15,speed:52,dmg:4,rate:1.2,reward:3,r:11,fly:true,first:7,eye:[.62,.08,'255,60,60'],gore:'#3a1010',desc:'Voa por cima de tudo, direto no QG.'},
+  explosivo:{name:'Explosivo',bug:'Inchado',hp:24,speed:30,dmg:0,rate:1,reward:3,r:13,first:3,boom:1,eye:[.33,.1,'255,150,40'],gore:'#6b5a12',desc:'Explode ao morrer ou ao encostar e fere as construções em volta. Mate de longe.'},
   divisor:{name:'Divisor',bug:'Amálgama',hp:70,speed:26,dmg:12,rate:1,reward:4,r:14,first:5,split:3,eye:[.52,.12,'255,90,90'],gore:'#5a0d0d',desc:'Ao morrer, se divide em 3 Rastejantes.'},
-  filhote:{name:'Rastejante',bug:'Pedaço do Amálgama',hp:14,speed:58,dmg:3,rate:2,reward:1,r:7,first:5,child:1,eye:[.6,.14,'255,90,90'],gore:'#5a0d0d',desc:'Rápido e fraco. Nasce quando o Divisor morre.'},
-  saltador:{name:'Saltador',bug:'Pernalonga',hp:30,speed:44,dmg:7,rate:1.2,reward:4,r:10,first:6,jump:2,eye:[.37,.1,'200,140,255'],gore:'#4a0d2a',desc:'Pula por cima de barricadas, até 2 vezes.'},
+  filhote:{name:'Rastejante',bug:'Pedaço do Amálgama',hp:8,speed:58,dmg:2,rate:2,reward:1,r:7,first:5,child:1,eye:[.6,.14,'255,90,90'],gore:'#5a0d0d',desc:'Rápido e fraco. Nasce quando o Divisor morre.'},
+  saltador:{name:'Saltador',bug:'Pernalonga',hp:18,speed:44,dmg:4,rate:1.2,reward:2,r:10,first:6,jump:2,eye:[.37,.1,'200,140,255'],gore:'#4a0d2a',desc:'Pula por cima de barricadas, até 2 vezes.'},
   curandeiro:{name:'Curandeiro',bug:'Necrófago',hp:55,speed:28,dmg:6,rate:1,reward:9,r:11,first:8,heal:1,eye:[.37,.11,'120,255,150'],gore:'#1f4a1a',desc:'Cura os zumbis por perto a cada 2 s. Mate primeiro.'},
   escudo:{name:'Escudeiro',bug:'Porta-escudo',hp:60,speed:26,dmg:10,rate:1,reward:8,r:13,first:9,shield:90,eye:[.37,.1,'150,200,255'],gore:'#4a0b0b',desc:'O escudo absorve o dano até quebrar. O Railgun atravessa.'},
   escavador:{name:'Escavador',bug:'Toupeira',hp:65,speed:34,dmg:14,rate:1,reward:10,r:12,first:11,burrow:1,eye:[.37,.1,'255,230,140'],gore:'#3a2a10',desc:'Anda por baixo da terra e surge colado na base, sem passar pelo anel.'},
@@ -597,10 +610,11 @@ const lv=(b,k)=>b.u[k]||0;
 function adj4(b){const r=[];for(const [dx,dy] of[[1,0],[-1,0],[0,1],[0,-1]]){const x=b.x+dx,y=b.y+dy;if(x>=0&&y>=0&&x<COLS&&y<ROWS){const o=S.grid[y][x];if(o&&o!==b&&!r.includes(o))r.push(o);}}return r;}
 function recalcSyn(){
   if(!S)return;S.links=[];
-  for(const b of S.blds)b.syn={amp:0,thermal:0,cross:0,superc:0};
+  for(const b of S.blds)b.syn={amp:0,thermal:0,cross:0,superc:0,focus:0};
   for(const b of S.blds){if(!DEFS[b.type].range||b.type==='core')continue;
     for(const o of adj4(b)){
       if(o.type==='amp'){const v=.2+.05*lv(o,'power');if(v>b.syn.amp)b.syn.amp=v;S.links.push([o,b,'255,120,200']);}
+      if(o.type==='foco'){const v=.6+.1*lv(o,'lente');if(v>b.syn.focus)b.syn.focus=v;S.links.push([o,b,'255,180,80']);}
       if(b.type==='canhao'&&o.type==='crio'){b.syn.thermal=1;S.links.push([o,b,'92,200,255']);}
       if(b.type==='railgun'&&o.type==='crio'){b.syn.superc=1;S.links.push([o,b,'214,140,255']);}
       if(b.type==='metral'&&o.type==='metral'){b.syn.cross=1;if(b.id<o.id)S.links.push([o,b,'255,230,150']);}
@@ -608,9 +622,9 @@ function recalcSyn(){
 const sy=(b,k)=>(b.syn&&b.syn[k])||0;
 function stat(b,k){const d=DEFS[b.type];
   switch(k){
-    case 'dmg':return d.dmg*(1+.35*lv(b,'dmg'))*(1+.08*pk('arsenal'))*(1+sy(b,'amp'))*(b.type==='core'&&C('furia')?2:1);
+    case 'dmg':return d.dmg*(1+.35*lv(b,'dmg'))*(1+.08*pk('arsenal'))*(1+sy(b,'amp'))*(1+sy(b,'focus'))*(b.type==='core'&&C('furia')?2:1);
     case 'range':return (d.range*(1+.12*lv(b,'range'))+(b.type==='core'&&C('furia')?1.5:0))*(EV('neblina')?.7:1);
-    case 'rate':return d.rate*(1+.18*lv(b,'rate'))*(1+.25*C('sobrecarga'))*(1+.15*sy(b,'cross'))*(1+.25*sy(b,'superc'));
+    case 'rate':return d.rate*(1+.18*lv(b,'rate'))*(1+.25*C('sobrecarga'))*(1+.15*sy(b,'cross'))*(1+.25*sy(b,'superc'))*(sy(b,'focus')?.65:1);
     case 'income':return (d.income||0)*(1+.6*lv(b,'income'));
     case 'reveal':return d.reveal+1.5*lv(b,'reveal');
     case 'maxhp':return Math.round(d.hp*(b.type==='core'?1+.15*pk('qg'):1)*(1+.35*lv(b,'armor')));
@@ -620,6 +634,10 @@ function stat(b,k){const d=DEFS[b.type];
     case 'slowT':return 2+lv(b,'chill');
     case 'splash':return d.splash*(1+.2*lv(b,'blast'));
     case 'hits':return 1+lv(b,'rail');
+    case 'chain':return 4+lv(b,'chainup');
+    case 'poison':return stat(b,'dmg')*2*(1+.4*lv(b,'toxina'));
+    case 'aura':return d.aura+.5*lv(b,'campo');
+    case 'vuln':return .45+.1*lv(b,'campo');
   }return d[k];}
 function upCost(b,k){const base=b.type==='core'?120:Math.max(25,(DEFS[b.type].cost||40)*.6);return Math.round(base*UPG[k].m*Math.pow(1.55,lv(b,k)));}
 function upCount(b){let n=0;for(const k in b.u)n+=b.u[k];return n;}
@@ -640,15 +658,15 @@ function startWave(){
   S.wave++;S.phase='wave';S.waveT=0;const n=S.wave;S.event=S.nextEvent;S.nextEvent=null;
   let mult=1+.17*(n-1)+.006*(n-1)*(n-1);const dmult=1+.05*(n-1);
   const L=[];const add=(t,c)=>{for(let i=0;i<c;i++)L.push(t);};
-  add('guerreiro',4+Math.round(n*1.5));
-  if(n>=2)add('agil',Math.round((n-1)*1.1));
-  if(n>=4)add('arqueiro',Math.round((n-3)*.8));
+  add('guerreiro',6+Math.round(n*2.4+n*n*.05));
+  if(n>=2)add('agil',Math.round((n-1)*1.8));
+  if(n>=4)add('arqueiro',Math.round((n-3)*1.6));
   if(n>=5)add('tanque',Math.floor((n-3)/2));
-  if(n>=6)add('invisivel',Math.round((n-5)*.7));
-  if(n>=7)add('vespa',Math.round((n-5)*.8));
-  if(n>=3)add('explosivo',Math.round((n-2)*.6));
-  if(n>=5)add('divisor',Math.max(1,Math.floor((n-3)*.45)));
-  if(n>=6)add('saltador',Math.round((n-4)*.6));
+  if(n>=6)add('invisivel',Math.round((n-5)*1.3));
+  if(n>=7)add('vespa',Math.round((n-5)*1.7));
+  if(n>=3)add('explosivo',Math.round((n-2)*1.2));
+  if(n>=5)add('divisor',Math.max(1,Math.floor((n-3)*.8)));
+  if(n>=6)add('saltador',Math.round((n-4)*1.3));
   if(n>=8)add('curandeiro',Math.max(1,Math.floor((n-6)/2.5)));
   if(n>=9)add('escudo',Math.max(1,Math.floor((n-7)*.45)));
   if(n>=11)add('escavador',Math.max(1,Math.floor((n-9)/2)));
@@ -656,7 +674,7 @@ function startWave(){
   if(S.event==='horda'){const c=L.slice();for(const t of c)L.push(t);mult*=.6;}
   if(n%10===0)add('rainha',n/10);
   shuffle(L);
-  const dur=8+L.length*.35;
+  const dur=7+L.length*.17;
   S.queue=L.map((type,i)=>({t:i/L.length*dur+Math.random()*.4,type,sec:S.sectors[i%S.sectors.length],mult,dmult})).sort((a,b)=>a.t-b.t);
   const nt=newTypes(n);
   S.banner={txt:'Onda '+n,sub:S.event?'Evento: '+EVENTS[S.event].name:nt.length?'Novo: '+nt.map(t=>EN[t].name+' ('+EN[t].bug+')').join(', '):'',life:2.6};
@@ -700,6 +718,7 @@ function hurtB(b,a){
 function hurtE(e,a,ign=0){
   if(e.dead||e.under)return;const ar=Math.max(0,(EN[e.type].armor||0)+(EV('blindados')?3:0)-ign);
   if(C('executor')&&e.hp<e.maxhp*.3)a*=1.6;
+  if(e.accel)a*=1+e.accel;
   if(ar)a=Math.max(a*.25,a-ar);
   if(e.shield>0&&ign<99){const ab=Math.min(e.shield,a);e.shield-=ab;a-=ab;
     if(e.shield<=0){burst(e.x,e.y,'#bcd6f0',12,100);S.texts.push({x:e.x,y:e.y-12,txt:'escudo quebrado',life:.8,col:'#bcd6f0'});}
@@ -710,13 +729,14 @@ function hurtE(e,a,ign=0){
     if(C('gelo')&&e.slowT>0)S.booms.push({x:e.x,y:e.y,dmg:(15+3*S.wave)*C('gelo')});
     if(C('acido')&&!e.fly)S.pools.push({x:e.x,y:e.y,R:1.1*TILE,life:4,dps:(6+S.wave)*C('acido')});
     if(d.boom)blast(e);
+    if(e.poisonT>0)for(const o of S.ens)if(o!==e&&!o.dead&&!o.under&&!(o.poisonT>0)&&Math.hypot(o.x-e.x,o.y-e.y)<=1.4*TILE){o.poisonT=3;o.poisonD=e.poisonD*.8;}
     if(d.split)for(let i=0;i<d.split;i++){const a=i/d.split*TAU+Math.random()*.5,c=mkE('filhote',e.x+Math.cos(a)*10,e.y+Math.sin(a)*10,e.mult,e.dmult);c.ang=e.ang;}
     burst(e.x,e.y,d.gore,e.r>14?24:12,110);burst(e.x,e.y,'#2a2420',6,70);
-    S.decals.push({x:e.x,y:e.y,col:d.gore,blobs:blobs(e.r),life:12,max:12});if(S.decals.length>240)S.decals.shift();
+    S.decals.push({x:e.x,y:e.y,col:d.gore,blobs:blobs(e.r),life:8,max:8});if(S.decals.length>200)S.decals.shift();
     S.texts.push({x:e.x,y:e.y-6,txt:'+'+e.reward,life:.9,col:'#f5c542'});
     if(d.first===10)S.shake=10;}}
 function blobs(r){const a=[];for(let i=0;i<6;i++)a.push({dx:rnd(-r,r)*.8,dy:rnd(-r,r)*.8,r:rnd(r*.2,r*.6)});return a;}
-function burst(x,y,col,n,sp){for(let i=0;i<n;i++){const a=Math.random()*TAU,s=rnd(.3,1)*sp;S.parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:rnd(.35,.8),col,sz:rnd(2,4.5)});}}
+function burst(x,y,col,n,sp){if(S.parts.length>900)return;if(S.parts.length>500)n=Math.ceil(n/3);for(let i=0;i<n;i++){const a=Math.random()*TAU,s=rnd(.3,1)*sp;S.parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:rnd(.35,.8),col,sz:rnd(2,4.5)});}}
 function nearestB(e,R){let best=null,bd=R;
   for(const b of S.blds){const x0=b.x*TILE,y0=b.y*TILE,x1=x0+b.w*TILE,y1=y0+b.h*TILE;
     const dx=Math.max(x0-e.x,0,e.x-x1),dy=Math.max(y0-e.y,0,e.y-y1),d=Math.hypot(dx,dy);if(d<=bd){bd=d;best=b;}}
@@ -732,11 +752,14 @@ function update(dt){
   const radars=S.blds.filter(b=>b.type==='radar').map(b=>({c:bc(b),R:stat(b,'reveal')*TILE}));
   for(const f of S.flares)radars.push({c:{x:f.x,y:f.y},R:f.R});
   for(const k in S.ab)S.ab[k]=Math.max(0,S.ab[k]-dt*(1+.3*C('tatico')));
+  const accs=S.blds.filter(b=>b.type==='acel').map(b=>({c:bc(b),R:stat(b,'aura')*TILE,v:stat(b,'vuln')}));
 
   for(const e of S.ens){
     const d=EN[e.type];if(e.slowT>0)e.slowT-=dt;if(e.revealT>0)e.revealT-=dt;if(e.hitT>0)e.hitT-=dt;
     e.vis=!d.invis||e.revealT>0||radars.some(r=>Math.hypot(e.x-r.c.x,e.y-r.c.y)<=r.R);
-    const sp=e.speed*(e.slowT>0?e.slowF:1);
+    e.accel=0;if(!e.under)for(const a of accs)if(Math.hypot(e.x-a.c.x,e.y-a.c.y)<=a.R&&a.v>e.accel)e.accel=a.v;
+    if(e.poisonT>0){e.poisonT-=dt;hurtE(e,e.poisonD*dt,99);if(e.dead)continue;if(Math.random()<dt*3)S.parts.push({x:e.x+rnd(-5,5),y:e.y+rnd(-5,5),vx:0,vy:-18,life:.6,col:'#9fe84a',sz:2.5});}
+    const sp=e.speed*(e.slowT>0?e.slowF:1)*(e.accel?1.35:1);
     let dx=CCX-e.x,dy=CCY-e.y;const dist=Math.hypot(dx,dy)||1;dx/=dist;dy/=dist;
     if(e.under){e.ang=Math.atan2(dy,dx);e.anim+=dt*sp/5;e.x+=dx*sp*1.15*dt;e.y+=dy*sp*1.15*dt;
       if(Math.random()<dt*14)S.parts.push({x:e.x+rnd(-6,6),y:e.y+rnd(-6,6),vx:rnd(-20,20),vy:rnd(-20,20),life:rnd(.3,.6),col:'#5a4428',sz:rnd(2,4)});
@@ -764,9 +787,13 @@ function update(dt){
     else{e.biting=false;e.anim+=dt*sp/5;e.x+=dx*sp*dt;e.y+=dy*sp*dt;}
   }
   const E=S.ens;
-  for(let i=0;i<E.length;i++){const a=E[i];if(a.under||a.jumping)continue;for(let j=i+1;j<E.length;j++){const b=E[j];if(a.fly!==b.fly||b.under||b.jumping)continue;
-    const dx=b.x-a.x,dy=b.y-a.y,m=a.r+b.r;if(Math.abs(dx)>m||Math.abs(dy)>m)continue;const d=Math.hypot(dx,dy)||.01;
-    if(d<m){const p=(m-d)/2,ux=dx/d,uy=dy/d;a.x-=ux*p;a.y-=uy*p;b.x+=ux*p;b.y+=uy*p;}}}
+  const CS=32,cells=new Map();
+  for(let i=0;i<E.length;i++){const a=E[i];if(a.under||a.jumping||a.dead)continue;const k=((a.x/CS)|0)+((a.y/CS)|0)*100;let c=cells.get(k);if(!c){c=[];cells.set(k,c);}c.push(i);}
+  for(const [k,list] of cells){const cx=k%100,cy=(k/100)|0;
+    for(let oy=0;oy<=1;oy++)for(let ox=-1;ox<=1;ox++){if(oy===0&&ox<0)continue;const nb=oy===0&&ox===0?list:cells.get((cx+ox)+(cy+oy)*100);if(!nb)continue;
+      for(let ii=0;ii<list.length;ii++){const a=E[list[ii]];for(let jj=(nb===list?ii+1:0);jj<nb.length;jj++){const b=E[nb[jj]];if(a.fly!==b.fly)continue;
+        const dx=b.x-a.x,dy=b.y-a.y,m=a.r+b.r;if(Math.abs(dx)>m||Math.abs(dy)>m)continue;const d=Math.hypot(dx,dy)||.01;
+        if(d<m){const p=(m-d)/2,ux=dx/d,uy=dy/d;a.x-=ux*p;a.y-=uy*p;b.x+=ux*p;b.y+=uy*p;}}}}}
 
   // efeitos de cartas, eventos e habilidades
   let guard=0;while(S.booms.length&&guard++<60){const bm=S.booms.shift();S.fx.push({k:'ring',x:bm.x,y:bm.y,r:4,R:1.6*TILE,life:.3,max:.3,col:'170,230,255',light:90});burst(bm.x,bm.y,'#d8f6ff',10,120);
@@ -825,6 +852,12 @@ function fire(b,e,c){
   if(b.type==='canhao'||b.type==='crio'){
     S.projs.push({x:mx,y:my,t:e,tx:e.x,ty:e.y,sp:b.type==='canhao'?380:300,dmg,splash:stat(b,'splash')*TILE,slow:!!d.slow,slowF:stat(b,'slowF'),slowT:stat(b,'slowT'),air:d.air,col:d.col,big:b.type==='canhao',thermal:sy(b,'thermal')});
     if(b.type==='canhao')S.fx.push({k:'flash',x:mx,y:my,ang:b.ang,life:.07,max:.07,s:10,light:90});
+  }else if(b.type==='veneno'){
+    S.projs.push({x:mx,y:my,t:e,tx:e.x,ty:e.y,sp:260,dmg,splash:d.splash*TILE,poison:stat(b,'poison'),air:false,col:'#9fe84a'});
+  }else if(b.type==='tesla'){
+    const det=stat(b,'detect'),hit=new Set();let cur=e,px=mx,py=my-6,dd=dmg;const n=stat(b,'chain')+1;
+    for(let j=0;j<n&&cur;j++){hit.add(cur);hurtE(cur,dd);S.fx.push({k:'bolt',pts:zig(px,py,cur.x,cur.y),x:cur.x,y:cur.y,life:.18,max:.18,light:j?0:90});
+      px=cur.x;py=cur.y;dd*=.8;let nb=null,nd=1.9*TILE;for(const o of S.ens){if(hit.has(o)||o.dead||o.under||(!o.vis&&!det))continue;const q=Math.hypot(o.x-px,o.y-py);if(q<nd){nd=q;nb=o;}}cur=nb;}
   }else if(b.type==='railgun'){
     const R=stat(b,'range')*TILE,ux=Math.cos(b.ang),uy=Math.sin(b.ang),n=stat(b,'hits'),det=stat(b,'detect');
     const hits=[];for(const o of S.ens){if(o.dead||o.under||(!o.vis&&!det&&o!==e))continue;const rx=o.x-c.x,ry=o.y-c.y,t=rx*ux+ry*uy;if(t<0||t>R+o.r)continue;
@@ -840,9 +873,11 @@ function fire(b,e,c){
       if(!nb)break;hurtE(nb,dmg*.5,stat(b,'pierce'));S.fx.push({k:'line',x1:from.x,y1:from.y,x2:nb.x,y2:nb.y,life:.06,max:.06,w:1.2,col:'255,210,120'});from=nb;}
     S.fx.push({k:'flash',x:mx,y:my,ang:b.ang,life:.05,max:.05,s:6,light:50});
   }}
+function zig(x1,y1,x2,y2){const pts=[[x1,y1]];for(let i=1;i<6;i++){const t=i/6;pts.push([x1+(x2-x1)*t+rnd(-6,6),y1+(y2-y1)*t+rnd(-6,6)]);}pts.push([x2,y2]);return pts;}
 function explode(p){
   for(const e of S.ens){if(e.dead||(e.fly&&!p.air))continue;
-    if(Math.hypot(e.x-p.tx,e.y-p.ty)<=p.splash+e.r){hurtE(e,p.dmg*(p.thermal&&e.slowT>0?1.5:1));if(p.slow){e.slowT=p.slowT;e.slowF=p.slowF;e.revealT=3;}}}
+    if(Math.hypot(e.x-p.tx,e.y-p.ty)<=p.splash+e.r){hurtE(e,p.dmg*(p.thermal&&e.slowT>0?1.5:1));if(p.slow){e.slowT=p.slowT;e.slowF=p.slowF;e.revealT=3;}if(p.poison){e.poisonT=4;e.poisonD=Math.max(e.poisonD||0,p.poison);}}}
+  if(p.poison){S.fx.push({k:'ring',x:p.tx,y:p.ty,r:4,R:p.splash,life:.45,max:.45,col:'150,230,80',light:60});burst(p.tx,p.ty,'#9fe84a',10,60);return;}
   S.fx.push({k:'ring',x:p.tx,y:p.ty,r:4,R:p.splash,life:.3,max:.3,col:p.slow?'92,200,255':'255,170,80',light:p.slow?70:110});
   if(!p.slow){burst(p.tx,p.ty,'#ffb347',8,120);S.decals.push({x:p.tx,y:p.ty,col:'#15120d',blobs:blobs(10),life:6,max:6});}
   else burst(p.tx,p.ty,'#bdeeff',8,90);
@@ -981,6 +1016,16 @@ function drawB(b,now){
     if(ctx.createConicGradient){const sw=ctx.createConicGradient(a-.9,0,0);sw.addColorStop(0,'rgba(92,200,255,0)');sw.addColorStop(.14,'rgba(92,200,255,.35)');sw.addColorStop(.15,'rgba(92,200,255,0)');ctx.fillStyle=sw;ctx.beginPath();ctx.arc(0,0,13,0,TAU);ctx.fill();}
     circ(0,0,4,'#9aa7ad');ctx.rotate(a);ctx.fillStyle='#e3ebef';ctx.beginPath();ctx.ellipse(4,0,4,10,0,0,TAU);ctx.fill();
     ctx.strokeStyle='#5cc8ff';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(10,0);ctx.stroke();circ(10,0,1.8,'#5cc8ff');ctx.restore();
+  }else if(b.type==='foco'){
+    plate(x+3,y+3,w-6,h-6,'#4a4232','#1f1a12',5);const pu=.5+.5*Math.sin(now*2+b.id);
+    ctx.save();ctx.shadowColor='#ffb450';ctx.shadowBlur=6+8*pu;circ(c.x,c.y,9,rgrad(c.x,c.y,9,'#fff6dc','#c87a20'));ctx.restore();
+    ctx.strokeStyle='rgba(255,220,160,.9)';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(c.x,c.y,10.5,0,TAU);ctx.stroke();
+    ctx.strokeStyle=`rgba(255,180,80,${.3+.4*pu})`;for(let k=0;k<4;k++){const a=k*Math.PI/2;ctx.beginPath();ctx.moveTo(c.x+Math.cos(a)*12,c.y+Math.sin(a)*12);ctx.lineTo(c.x+Math.cos(a)*15,c.y+Math.sin(a)*15);ctx.stroke();}
+    circ(c.x-3,c.y-3,2.5,'rgba(255,255,255,.7)');
+  }else if(b.type==='acel'){
+    plate(x+3,y+3,w-6,h-6,'#4a2a2a','#1f1010',5);ctx.save();ctx.translate(c.x,c.y);ctx.rotate(now*2+b.id);
+    ctx.strokeStyle='#ff6a5a';ctx.lineWidth=2.5;ctx.lineCap='round';for(let k=0;k<3;k++){ctx.rotate(TAU/3);ctx.beginPath();ctx.moveTo(4,-5);ctx.lineTo(9,0);ctx.lineTo(4,5);ctx.stroke();}ctx.restore();
+    circ(c.x,c.y,3,'#ffd0c8');
   }else if(b.type==='amp'){
     plate(x+3,y+3,w-6,h-6,'#4a3a48','#1f1820',5);
     const pu=.5+.5*Math.sin(now*3+b.id);ctx.save();ctx.shadowColor='#ff78c8';ctx.shadowBlur=8+10*pu;ctx.fillStyle=rgrad(c.x,c.y-2,10,'#ffd6f0','#b0307a');
@@ -1008,6 +1053,13 @@ function drawB(b,now){
     }else if(b.type==='canhao'){
       ctx.fillStyle='#6d6f6a';ctx.fillRect(2+rec*1.6,-4.5,16,9);ctx.fillStyle='#3d3f3b';ctx.fillRect(15+rec*1.6,-5.5,4,11);
       ctx.fillStyle=rgrad(0,0,11,'#d8b07a','#5c4228');rr(-9,-9,18,18,4);ctx.fill();ctx.strokeStyle='rgba(0,0,0,.5)';ctx.lineWidth=1;ctx.stroke();circ(0,0,3,'#3d2c18');
+    }else if(b.type==='tesla'){
+      ctx.rotate(-b.ang);for(let k=0;k<3;k++){ctx.strokeStyle=k%2?'#9a7a3a':'#c9a05a';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,9-k*2.5,0,TAU);ctx.stroke();}
+      ctx.save();ctx.shadowColor='#7fd8ff';ctx.shadowBlur=10;circ(0,0,4,rgrad(0,0,4,'#ffffff','#3aa8e0'));ctx.restore();
+      if(Math.random()<.15){ctx.strokeStyle='rgba(180,230,255,.9)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,0);const a=Math.random()*TAU;ctx.lineTo(Math.cos(a)*7+rnd(-2,2),Math.sin(a)*7+rnd(-2,2));ctx.lineTo(Math.cos(a)*12,Math.sin(a)*12);ctx.stroke();}
+    }else if(b.type==='veneno'){
+      ctx.fillStyle='#5a6a48';ctx.fillRect(4+rec,-2.5,12,5);ctx.fillStyle='#3a4a2a';ctx.fillRect(14+rec,-3.5,3,7);
+      circ(0,0,9,rgrad(0,0,9,'#d8ff9a','#3f7a14'));circ(-2,-2,2,'rgba(255,255,255,.6)');circ(2,2,1.5,'rgba(230,255,180,.8)');
     }else if(b.type==='railgun'){
       const ch=1-Math.max(0,b.cool)*stat(b,'rate');
       ctx.fillStyle='#e0e0e6';ctx.fillRect(0+rec,-4.5,22,2.4);ctx.fillRect(0+rec,2.1,22,2.4);
@@ -1034,6 +1086,7 @@ function drawE(e,now){
   ctx.fillStyle='rgba(0,0,0,.35)';ctx.beginPath();ctx.ellipse(e.fly?7:2,e.fly?13:3,r*1.0,r*.75,0,0,TAU);ctx.fill();
   if(e.fly)ctx.translate(0,-5);
   ctx.rotate(e.ang);ctx.drawImage(frameOf(e),-sp.S/2,-sp.S/2);
+  if(e.poisonT>0){ctx.fillStyle='rgba(140,230,60,.32)';ctx.beginPath();ctx.ellipse(0,0,r*.8,r*1.05,0,0,TAU);ctx.fill();}
   if(e.slowT>0){ctx.fillStyle='rgba(120,210,255,.38)';ctx.beginPath();ctx.ellipse(0,0,r*.8,r*1.05,0,0,TAU);ctx.fill();}
   if(e.hitT>0){ctx.fillStyle='rgba(255,60,60,.4)';ctx.beginPath();ctx.ellipse(0,0,r*.8,r*1.0,0,0,TAU);ctx.fill();}
   ctx.restore();
@@ -1081,6 +1134,7 @@ function draw(){
   ctx.globalAlpha=1;
   if(S.build){const z=DEFS[S.build].zone==='base'?BASE_R:DEF_R;ctx.strokeStyle='rgba(255,255,255,.55)';ctx.lineWidth=2;ctx.setLineDash([6,6]);
     ctx.strokeRect((CX-z)*TILE,(CY-z)*TILE,(2*z+1)*TILE,(2*z+1)*TILE);ctx.setLineDash([]);}
+  for(const b of S.blds)if(b.type==='acel'){const c=bc(b),R=stat(b,'aura')*TILE,pu=.5+.5*Math.sin(performance.now()/300);ctx.fillStyle=`rgba(255,70,50,${.05+.03*pu})`;ctx.beginPath();ctx.arc(c.x,c.y,R,0,TAU);ctx.fill();ctx.strokeStyle=`rgba(255,90,70,${.25+.15*pu})`;ctx.setLineDash([6,6]);ctx.lineWidth=1.5;ctx.stroke();ctx.setLineDash([]);}
   for(const pl of S.pools){ctx.globalAlpha=Math.min(1,pl.life)*.45;circ(pl.x,pl.y,pl.R,'#7fbf1a');ctx.globalAlpha=Math.min(1,pl.life)*.6;circ(pl.x+rnd(-3,3),pl.y+rnd(-3,3),pl.R*.3,'#c9ff3a');}ctx.globalAlpha=1;
   for(const [a,b,col] of S.links){const p=bc(a),q=bc(b),pul=.35+.25*Math.sin(now*3);ctx.strokeStyle=`rgba(${col},${pul})`;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);ctx.stroke();}
   for(const b of S.blds)drawB(b,now);
@@ -1117,13 +1171,14 @@ function draw(){
   const sel=S.sel;
   if(sel){const c=bc(sel);ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.strokeRect(sel.x*TILE+1,sel.y*TILE+1,sel.w*TILE-2,sel.h*TILE-2);
     if(DEFS[sel.type].range)ring(c.x,c.y,stat(sel,'range')*TILE,'255,255,255');
-    if(sel.type==='radar')ring(c.x,c.y,stat(sel,'reveal')*TILE,'92,200,255');}
+    if(sel.type==='radar')ring(c.x,c.y,stat(sel,'reveal')*TILE,'92,200,255');
+    if(sel.type==='acel')ring(c.x,c.y,stat(sel,'aura')*TILE,'255,90,70');}
   if(S.pending){const p=S.pending;ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.setLineDash([4,4]);ctx.beginPath();ctx.arc(p.px,p.py,TILE*.75,0,TAU);ctx.stroke();ctx.setLineDash([]);}
   if(S.ability&&S.mouse){const a=ABIL[S.ability];ring(S.mouse.x,S.mouse.y,a.r*TILE,S.ability==='gelo'||S.ability==='flare'?'150,220,255':'255,95,74');}
-  if(sel&&sel.type==='amp'){ctx.strokeStyle='rgba(255,120,200,.7)';ctx.lineWidth=2;for(const [dx,dy] of[[1,0],[-1,0],[0,1],[0,-1]])ctx.strokeRect((sel.x+dx)*TILE+3,(sel.y+dy)*TILE+3,TILE-6,TILE-6);}
+  if(sel&&(sel.type==='amp'||sel.type==='foco')){ctx.strokeStyle='rgba(255,120,200,.7)';ctx.lineWidth=2;for(const [dx,dy] of[[1,0],[-1,0],[0,1],[0,-1]])ctx.strokeRect((sel.x+dx)*TILE+3,(sel.y+dy)*TILE+3,TILE-6,TILE-6);}
   if(S.build&&S.hover){const {x,y}=S.hover,ok=canPlace(S.build,x,y)&&S.money>=costOf(S.build);
     ctx.fillStyle=ok?'rgba(126,217,87,.35)':'rgba(255,95,74,.35)';ctx.fillRect(x*TILE,y*TILE,TILE,TILE);
-    const R=DEFS[S.build].range||DEFS[S.build].reveal;
+    const R=DEFS[S.build].range||DEFS[S.build].reveal||DEFS[S.build].aura;
     if(R)ring((x+.5)*TILE,(y+.5)*TILE,R*TILE,ok?(S.build==='radar'?'92,200,255':'126,217,87'):'255,95,74');}
   ctx.restore();
   if(S.banner){const a=Math.min(1,S.banner.life*2);ctx.globalAlpha=a;ctx.textAlign='center';
@@ -1136,7 +1191,7 @@ function ring(x,y,r,col){ctx.fillStyle=`rgba(${col},.07)`;ctx.strokeStyle=`rgba(
 
 // ================= INTERFACE =================
 function buildButtons(){
-  const mk=t=>{const d=DEFS[t],k=ORDER.indexOf(t)+1;return `<button class="bb" data-t="${t}"><kbd>${k}</kbd><span class="n">${d.name}</span><span class="c">$${costOf(t)}</span><span class="d">${d.desc}</span></button>`;};
+  const mk=t=>{const d=DEFS[t],k=KEYS[ORDER.indexOf(t)];return `<button class="bb" data-t="${t}"><kbd>${k}</kbd><span class="n">${d.name}</span><span class="c">$${costOf(t)}</span><span class="d">${d.desc}</span></button>`;};
   $('ecoBtns').innerHTML=ORDER.filter(t=>DEFS[t].zone==='base').map(mk).join('');
   $('defBtns').innerHTML=ORDER.filter(t=>DEFS[t].zone==='def').map(mk).join('');
 }
@@ -1153,8 +1208,12 @@ const fmt=v=>(Math.round(v*10)/10).toString().replace('.',',');
 function selLine(s){const d=DEFS[s.type],p=['Vida '+Math.ceil(s.hp)+'/'+s.maxhp];
   if(stat(s,'income'))p.push('+'+fmt(stat(s,'income'))+' $/s');
   if(s.type==='radar')p.push('Revela num raio de '+fmt(stat(s,'reveal')));
+  if(s.type==='foco')p.push('+'+Math.round((.6+.1*lv(s,'lente'))*100)+'% de dano e −35% de cadência nas torres encostadas');
+  if(s.type==='acel')p.push('Raio '+fmt(stat(s,'aura'))+' · zumbis +35% rápidos e +'+Math.round(stat(s,'vuln')*100)+'% de dano recebido');
+  if(s.type==='tesla')p.push('Pula para '+stat(s,'chain')+' zumbis (−20% por salto)');
+  if(s.type==='veneno')p.push('Veneno '+Math.round(stat(s,'poison'))+'/s por 4 s, ignora armadura e passa para vizinhos');
   if(s.type==='amp')p.push('+'+Math.round((.2+.05*lv(s,'power'))*100)+'% de dano nas torres encostadas (não soma com outro Amplificador)');
-  if(s.syn){const q=[];if(s.syn.amp)q.push('Amplificada +'+Math.round(s.syn.amp*100)+'%');if(s.syn.thermal)q.push('Choque térmico');if(s.syn.superc)q.push('Supercondutor');if(s.syn.cross)q.push('Fogo cruzado');if(q.length)p.push('Sinergia: '+q.join(', '));}
+  if(s.syn){const q=[];if(s.syn.amp)q.push('Amplificada +'+Math.round(s.syn.amp*100)+'%');if(s.syn.focus)q.push('Focada +'+Math.round(s.syn.focus*100)+'% dano');if(s.syn.thermal)q.push('Choque térmico');if(s.syn.superc)q.push('Supercondutor');if(s.syn.cross)q.push('Fogo cruzado');if(q.length)p.push('Sinergia: '+q.join(', '));}
   if(s.temp!=null)p.push('some em '+Math.ceil(s.temp)+' s');
   if(d.range){p.push('Dano '+Math.round(stat(s,'dmg')),'Alcance '+fmt(stat(s,'range')),fmt(stat(s,'rate'))+' tiros/s');
     p.push(d.air?'acerta voadores':'só terrestres');if(stat(s,'detect'))p.push('enxerga invisíveis');
@@ -1299,7 +1358,7 @@ document.addEventListener('keydown',ev=>{
   if(S.choosing){if(k>='1'&&k<='3'&&S.choosing[+k-1])pickCard(S.choosing[+k-1]);return;}
   const ak={q:'bomba',w:'flare',e:'muro',r:'gelo'}[k.toLowerCase()];
   if(ak){setAbility(ak);return;}
-  if(k>='1'&&k<='9'){setBuild(ORDER[+k-1]);}
+  if(KEYS.includes(k.toUpperCase())){setBuild(ORDER[KEYS.indexOf(k.toUpperCase())]);}
   else if(k==='Escape'){S.build=null;S.sel=null;S.ability=null;refreshUI();}
   else if(k===' '){ev.preventDefault();callWave();}
   else if(k==='p'||k==='P'){S.paused=!S.paused;refreshUI();}

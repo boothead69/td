@@ -5,7 +5,9 @@ header('Cache-Control: no-store');
 
 $pos = strpos(__DIR__, '/public_html');      // pasta acima de public_html, nunca acessível pela web
 $dataDir = $pos !== false ? substr(__DIR__, 0, $pos) : dirname(__DIR__);
-$file    = $dataDir . '/enxame-ranking.json';
+$mode    = (string)($_GET['mode'] ?? '');
+if ($_SERVER['REQUEST_METHOD'] === 'POST') { $peek = json_decode((string)file_get_contents('php://input'), true) ?: []; $mode = (string)($peek['mode'] ?? ''); }
+$file    = preg_match('/^d\d{8}$/', $mode) ? $dataDir . '/enxame-daily-' . substr($mode, 1) . '.json' : $dataDir . '/enxame-ranking.json';
 $rlFile  = $dataDir . '/enxame-ratelimit.json';
 $KEEP    = 200;
 

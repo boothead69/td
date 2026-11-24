@@ -15,6 +15,49 @@ function out($code, $arr) { http_response_code($code); echo json_encode($arr, JS
 function sortRank(&$d) { usort($d, function ($a, $b) { return [$b['wave'], $b['kills']] <=> [$a['wave'], $a['kills']]; }); }
 function publicRow($r) { return ['name' => $r['name'], 'wave' => (int)$r['wave'], 'kills' => (int)$r['kills']]; }
 
+// ---------- progresso salvo por código (créditos, melhorias permanentes e conquistas) ----------
+$action = (string)($_GET['action'] ?? '');
+if ($action === 'save' || $action === 'load') {
+    $saveFile = $dataDir . '/enxame-saves.json';
+    $ip  = hash('sha256', $_SERVER['REMOTE_ADDR'] ?? '0');
+    $now = time();
+    $rl  = is_file($rlFile) ? (json_decode((string)file_get_contents($rlFile), true) ?: []) : [];
+    foreach ($rl as $k => $t) if ($now - $t > 3600) unset($rl[$k]);
+    $rk = $action . ':' . $ip;
+    if (isset($rl[$rk]) && $now - $rl[$rk] < 2) out(429, ['error' => 'Aguarde alguns segundos']);
+    $rl[$rk] = $now;
+    @file_put_contents($rlFile, json_encode($rl), LOCK_EX);
+
+    if ($action === 'load') {
+        $code = strtoupper((string)($_GET['code'] ?? ''));
+        if (!preg_match('/^[A-Z2-9]{8}$/', $code)) out(400, ['error' => 'Código inválido']);
+        $all = is_file($saveFile) ? (json_decode((string)file_get_contents($saveFile), true) ?: []) : [];
+        $h = hash('sha256', 'enxame|' . $code);
+        if (!isset($all[$h])) out(404, ['error' => 'Código não encontrado']);
+        out(200, ['meta' => $all[$h]['m']]);
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') out(405, ['error' => 'Método não permitido']);
+    $in   = json_decode((string)file_get_contents('php://input'), true) ?: [];
+    $code = strtoupper((string)($in['code'] ?? ''));
+    $m    = is_array($in['meta'] ?? null) ? $in['meta'] : [];
+    if (!preg_match('/^[A-Z2-9]{8}$/', $code)) out(400, ['error' => 'Código inválido']);
+    $PERKS = ['capital' => 5, 'qg' => 5, 'renda' => 5, 'arsenal' => 5, 'engenharia' => 4];
+    $clean = ['credits' => max(0, min(100000, (int)($m['credits'] ?? 0))), 'perks' => new stdClass(), 'ach' => new stdClass()];
+    $perks = []; foreach ($PERKS as $k => $mx) { $v = (int)(($m['perks'] ?? [])[$k] ?? 0); if ($v > 0) $perks[$k] = min($mx, $v); }
+    $ach = []; foreach ((array)($m['ach'] ?? []) as $k => $v) { if (count($ach) >= 60) break; if (preg_match('/^[a-z0-9]{1,12}$/', (string)$k) && $v) $ach[$k] = 1; }
+    if ($perks) $clean['perks'] = $perks;
+    if ($ach) $clean['ach'] = $ach;
+    $fp = fopen($saveFile, 'c+');
+    if (!$fp) out(500, ['error' => 'Não foi possível salvar']);
+    flock($fp, LOCK_EX);
+    $all = json_decode((string)stream_get_contents($fp), true) ?: [];
+    $all[hash('sha256', 'enxame|' . $code)] = ['m' => $clean, 't' => $now];
+    if (count($all) > 20000) { uasort($all, function ($a, $b) { return $b['t'] <=> $a['t']; }); $all = array_slice($all, 0, 20000, true); }
+    ftruncate($fp, 0); rewind($fp); fwrite($fp, json_encode($all)); fflush($fp); flock($fp, LOCK_UN); fclose($fp);
+    out(200, ['ok' => true]);
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $d = is_file($file) ? (json_decode((string)file_get_contents($file), true) ?: []) : [];
     sortRank($d);

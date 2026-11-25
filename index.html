@@ -820,7 +820,7 @@ function hurtE(e,a,ign=0){
     if(a<=0){e.hitT=.05;return;}}
   e.hp-=a;e.hitT=.08;
   if(e.hp<=0){e.dead=true;const d=EN[e.type];
-    if(S.dying.length<140)S.dying.push({type:e.type,x:e.x,y:e.y,ang:e.ang,r:e.r,fly:e.fly,t:0,boss:d.first===10,side:Math.random()<.5?1:-1});
+    if(S.dying.length<140)S.dying.push({type:e.type,x:e.x,y:e.y,ang:e.ang,r:e.r,fly:e.fly,t:0,boss:d.first===10,side:Math.random()<.5?1:-1,src:e});
     if(S.parts.length<900)S.parts.push({x:e.x,y:e.y,vx:rnd(-6,6),vy:rnd(-6,6),life:1,col:d.first===10?'#ff8a5a':'#b8ffc8',sz:3,soul:true});
     {const gv=d.first===10?40:ELITE[e.type]?4:e.type==='filhote'?(Math.random()<.5?1:0):1;if(gv){if(S.gems.length<450){const a=Math.random()*TAU;S.gems.push({x:e.x,y:e.y,v:gv,t:0,vx:Math.cos(a)*40,vy:Math.sin(a)*40});}else S.xp+=gv;}}
     if(d.first===10){S.bossKills++;S.chests.push({x:e.x,y:e.y,t:0,big:1});}else if(ELITE[e.type]&&Math.random()<.2)S.chests.push({x:e.x,y:e.y,t:0});
@@ -1953,10 +1953,37 @@ if(QF.props){
 if(QF.mist){MIST=[];const ft=new THREE.CanvasTexture(fog);ft.wrapS=ft.wrapT=THREE.RepeatWrapping;
   for(const [y,op,rep] of[[.14,.11,1.2],[.34,.07,.8],[.62,.04,.6]]){const m=new THREE.Mesh(new THREE.PlaneGeometry(COLS+30,ROWS+30),new THREE.MeshBasicMaterial({map:ft.clone(),transparent:true,opacity:op,depthWrite:false,color:0x8fa8c8}));
     m.material.map.needsUpdate=true;m.material.map.repeat.set(rep*2,rep*1.6);m.rotation.x=-Math.PI/2;m.position.y=y;m.renderOrder=3;m.userData.sp=.004+y*.01;MIST.push(m);SC.add(m);}}
+// ---- criaturas realistas (modelos animados do Mixamo) nas mais próximas da câmera ----
+const REAL={map:{guerreiro:{f:'zombie',h:1.0},tanque:{f:'mutant',h:1.15,tint:0x8a7060},rainha:{f:'mutant',h:1.05,tint:0xff5a40}},cap:[0,14,36,60][QI],src:{},free:{},active:new Map(),dying:new Map(),lastT:0};
+if(REAL.cap&&THREE.GLTFLoader&&THREE.SkeletonUtils){const L=new THREE.GLTFLoader();
+  for(const f of ['zombie','mutant'])L.load('models/'+f+'.glb',g=>{g.scene.updateMatrixWorld(true);const bb=new THREE.Box3().setFromObject(g.scene);REAL.src[f]={scene:g.scene,clips:g.animations,H:bb.max.y-bb.min.y};REAL.free[f]=[];},undefined,()=>{});}
+function realGet(type){const m=REAL.map[type],src=REAL.src[m.f];if(!src)return null;const fr=REAL.free[m.f];let o=fr.pop();
+  if(!o){const root=THREE.SkeletonUtils.clone(src.scene);const mats=[];root.traverse(c=>{if(c.isMesh){c.castShadow=SHADOW;c.receiveShadow=true;c.frustumCulled=false;c.material=[].concat(c.material).map(mm=>{const k=mm.clone();k.envMapIntensity=.9;if(QI)rimify(k,1.3,'.12,.18,.32');mats.push(k);return k;});if(c.material.length===1)c.material=c.material[0];}});
+    const mixer=new THREE.AnimationMixer(root),acts={};for(const cl of src.clips)acts[cl.name]=mixer.clipAction(cl);acts.attack&&(acts.attack.timeScale=1.4);acts.roar&&(acts.roar.setLoop(THREE.LoopOnce),acts.roar.clampWhenFinished=true);
+    o={root,mixer,acts,mats,f:m.f,cur:null};SC.add(root);}
+  o.type=type;o.root.visible=true;o.root.rotation.set(0,0,0);o.root.position.y=0;o.mixer.timeScale=1;const tint=REAL.map[type].tint;for(const k of o.mats){k.color.set(tint||0xffffff);k.emissive&&k.emissive.set(0);}o.cur=null;return o;}
+function realPlay(o,name,fade=.25){if(o.cur===name||!o.acts[name])return;const a=o.acts[name];if(o.cur&&o.acts[o.cur])o.acts[o.cur].fadeOut(fade);a.reset().setEffectiveWeight(1).fadeIn(fade).play();a.time=Math.random()*a.getClip().duration*(name==='walk'||name==='run'?1:0);o.cur=name;}
+function realFree(o){o.root.visible=false;o.mixer.stopAllAction();o.cur=null;REAL.free[o.f].push(o);}
+function realSync(now){const dt=Math.min(.1,Math.max(0,now-(REAL.lastT||now)))*((S.paused||S.choosing||S.chestOpen||S.over)?0:(S.speed||1));REAL.lastT=now;const chosen=new Set();
+  if(!REAL.cap||!Object.keys(REAL.src).length)return chosen;
+  const cand=[];for(const e of S.ens){if(e.dead||e.under||!REAL.map[e.type]||!REAL.src[REAL.map[e.type].f])continue;cand.push([Math.hypot(WX(e.x)-C3.tx,WZ(e.y)-C3.tz)-(e.type==='rainha'?99:0),e]);}
+  cand.sort((a,b)=>a[0]-b[0]);for(let i=0;i<Math.min(REAL.cap,cand.length);i++)chosen.add(cand[i][1]);
+  for(const [e,o] of REAL.active){if(chosen.has(e))continue;REAL.active.delete(e);const d0=(e.dead||!S.ens.includes(e))&&S.dying.find(d=>d.src===e);if(d0){REAL.dying.set(d0,o);o.mixer.timeScale=.25;}else realFree(o);}
+  for(const e of chosen){let o=REAL.active.get(e);if(!o){o=realGet(e.type);if(!o){chosen.delete(e);continue;}REAL.active.set(e,o);}
+    const d=EN[e.type],s=e.r/11*1.35,src=REAL.src[o.f],k=s*REAL.map[e.type].h*.95/src.H;
+    o.root.scale.setScalar(k);o.root.position.set(WX(e.x),0,WZ(e.y));o.root.rotation.y=-e.ang+Math.PI/2;
+    const spd=e.speed/(d.speed||1);realPlay(o,e.biting?'attack':(e.speed>1.25*(d.speed||1)||e.type==='rainha'&&e.hp<e.maxhp*.4?'run':'walk'));
+    if(o.cur==='walk'||o.cur==='run')o.acts[o.cur].timeScale=Math.max(.2,spd)*(o.cur==='run'?1:1.15);
+    for(const m of o.mats){if(!m.emissive)continue;if(e.hitT>0)m.emissive.setRGB(.9,.12,.08);else if(e.slowT>0)m.emissive.setRGB(.05,.15,.35);else if(e.poisonT>0)m.emissive.setRGB(.08,.3,.02);else m.emissive.setRGB(0,0,0);}
+    o.mixer.update(dt);}
+  for(const [d0,o] of REAL.dying){if(!S.dying.includes(d0)){REAL.dying.delete(d0);realFree(o);continue;}const L=d0.boss?1.6:.85,kk=Math.min(1,d0.t/L),fall=Math.min(1,kk/.4);
+    o.root.rotation.x=0;o.root.rotation.z=d0.side*fall*fall*Math.PI/2.2;o.root.position.y=-Math.max(0,kk-.6)*.8;for(const m of o.mats)if(m.emissive)m.emissive.setRGB(kk<.12?1:0,kk<.12?.3:0,0);o.mixer.update(dt);}
+  return chosen;}
 function syncEnemies(now){
-  const cnt={};let nb=0,ns=0,nm=0;
+  const cnt={};let nb=0,ns=0,nm=0;const REALSET=realSync(now);
   for(const e of S.ens){if(e.dead)continue;const x=WX(e.x),z=WZ(e.y),s=e.r/11*1.35;
     if(e.under){DUM.position.set(x,0,z);DUM.rotation.set(0,-e.ang,0);DUM.scale.set(s*1.3,s*.8+.15*Math.abs(Math.sin(now*8+e.x)),s*1.1);DUM.updateMatrix();if(nm<80)moundIM.setMatrixAt(nm++,DUM.matrix);continue;}
+    if(REALSET.has(e)){if(e.shield>0&&ns<120){DUM.position.set(WX(e.x),0,WZ(e.y));DUM.rotation.set(0,-e.ang,0);DUM.scale.setScalar(e.r/11*1.35);DUM.updateMatrix();shieldIM.setMatrixAt(ns++,DUM.matrix);}continue;}
     const t=e.type,im=IM[t];const i=cnt[t]=(cnt[t]||0);if(i>=MAXI)continue;cnt[t]++;
     let y=e.fly?1.15+Math.sin(now*3+e.x*.1)*.08:0;const jk=e.jumping?Math.sin(Math.PI*Math.min(1,e.jumping.t)):0;y+=jk*1.4;
     const bob=e.biting?0:Math.abs(Math.sin(e.anim*1.3))*.07*s;
@@ -1967,7 +1994,7 @@ function syncEnemies(now){
     if(e.hitT>0)TC.setRGB(2.2,.7,.7);else if(e.slowT>0)TC.setRGB(.75,1.05,1.6);else if(e.poisonT>0)TC.setRGB(.8,1.5,.6);else if(e.accel)TC.setRGB(1.35,.85,.8);else TC.setRGB(1,1,1);
     im.body.setColorAt(i,TC);
     DUM.position.set(x,.02,z);DUM.rotation.set(-Math.PI/2,0,0);const bs=s*(e.fly?.75:1)*(1-jk*.3);DUM.scale.set(bs,bs,1);DUM.updateMatrix();blobIM.setMatrixAt(nb++,DUM.matrix);}
-  for(const d0 of S.dying){const t=d0.type,im=IM[t];const i=cnt[t]=(cnt[t]||0);if(i>=MAXI)continue;cnt[t]++;const L=d0.boss?1.6:.85,k=Math.min(1,d0.t/L),s=d0.r/11*1.35;
+  for(const d0 of S.dying){if(REAL.dying.has(d0))continue;const t=d0.type,im=IM[t];const i=cnt[t]=(cnt[t]||0);if(i>=MAXI)continue;cnt[t]++;const L=d0.boss?1.6:.85,k=Math.min(1,d0.t/L),s=d0.r/11*1.35;
     const fall=Math.min(1,k/.35),y=d0.fly?Math.max(0,1.15*(1-k*2.2)):-Math.max(0,k-.55)*.9*s;
     DUM.position.set(WX(d0.x),y,WZ(d0.y));DUM.rotation.set(d0.side*fall*Math.PI/2,-d0.ang,0);DUM.scale.setScalar(s*(k>.7?1-(k-.7)/.3*.5:1)*(1+(1-fall)*.15));DUM.updateMatrix();
     im.body.setMatrixAt(i,DUM.matrix);DUM.scale.setScalar(0);DUM.updateMatrix();im.eyes.setMatrixAt(i,DUM.matrix);

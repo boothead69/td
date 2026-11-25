@@ -28,6 +28,85 @@ body.m .rot{left:max(8px,env(safe-area-inset-left));bottom:calc(max(8px,env(safe
 #side>*{flex-shrink:0}
 #side{width:320px;flex:none;background:var(--panel);border-left:1px solid var(--line);padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
 h1{font:700 26px/1 'Chakra Petch',sans-serif;margin:0;color:var(--acc)}
+/* ===== painel do computador: visual de equipamento militar gasto ===== */
+body:not(.m) #side{width:300px;padding:14px 14px 18px;gap:10px;background:
+  linear-gradient(180deg,rgba(126,217,87,.05),transparent 140px),
+  repeating-linear-gradient(135deg,rgba(255,255,255,.012) 0 2px,transparent 2px 7px),#141914;
+  border-left:1px solid #34412f;box-shadow:inset 1px 0 0 rgba(255,255,255,.03),-12px 0 30px rgba(0,0,0,.35)}
+body:not(.m) #side h1{font-size:30px;letter-spacing:3px;text-shadow:0 0 18px rgba(126,217,87,.35),0 2px 0 #0a0d09;position:relative;padding-bottom:10px}
+body:not(.m) #side h1::after{content:'';position:absolute;left:0;right:0;bottom:0;height:2px;background:linear-gradient(90deg,var(--acc),rgba(245,197,66,.6) 40%,transparent)}
+body:not(.m) #side h1 small{letter-spacing:.5px;font-size:12px}
+body:not(.m) .stat{position:relative;background:linear-gradient(180deg,#1d241b,#10140f);border:1px solid #384533;border-radius:4px;
+  clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),inset 0 -10px 18px rgba(0,0,0,.35)}
+body:not(.m) .stat b{font:700 22px/1.1 'Chakra Petch',sans-serif;text-shadow:0 0 10px rgba(255,255,255,.12)}
+body:not(.m) .stat:first-child b{color:var(--gold);text-shadow:0 0 12px rgba(245,197,66,.35)}
+body:not(.m) .stat small{text-transform:none;letter-spacing:.3px}
+body:not(.m) .bar{border-radius:3px;border-color:#3a4735;background:#0b0e0a;box-shadow:inset 0 2px 6px rgba(0,0,0,.6)}
+body:not(.m) .bar i{box-shadow:0 0 12px rgba(126,217,87,.4);background-image:linear-gradient(180deg,rgba(255,255,255,.25),transparent 55%),repeating-linear-gradient(90deg,transparent 0 9px,rgba(0,0,0,.18) 9px 10px)!important}
+body:not(.m) #side h3{display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:.6px;color:#b9c7b1;font-size:12px;margin-top:2px}
+body:not(.m) #side h3::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,#3d4a37,transparent)}
+body:not(.m) #side button:not(.spec):not(.cardpick){border-radius:3px;background:linear-gradient(180deg,#273024,#1a2018);border:1px solid #3b4836;box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 2px 0 #0a0d09;transition:transform .08s,border-color .15s,box-shadow .15s}
+@media(hover:hover){body:not(.m) #side button:not(:disabled):hover{border-color:var(--acc);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 0 12px rgba(126,217,87,.25),0 2px 0 #0a0d09}}
+body:not(.m) #side button:not(:disabled):active{transform:translateY(1px)}
+body:not(.m) #nextBtn{min-height:48px;font:700 15px 'Chakra Petch',sans-serif;letter-spacing:.6px;background:linear-gradient(180deg,#4f8f35,#2b5a1f)!important;border-color:#7ed957!important;color:#f2ffe8;
+  clip-path:polygon(12px 0,calc(100% - 12px) 0,100% 50%,calc(100% - 12px) 100%,12px 100%,0 50%);text-shadow:0 1px 0 rgba(0,0,0,.5)}
+body:not(.m) #nextBtn:not(:disabled){animation:nb 2.2s ease-in-out infinite}@keyframes nb{50%{filter:brightness(1.18) drop-shadow(0 0 8px rgba(126,217,87,.6))}}
+body:not(.m) #nextBtn:disabled{opacity:.55;animation:none;filter:grayscale(.5)}
+body:not(.m) .row4{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+body:not(.m) .row4 button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 2px 6px;min-height:56px;font-size:10.5px;line-height:1.1;color:#c9d6c2}
+body:not(.m) .row4 button::before{content:'';width:20px;height:20px;background:var(--acc);-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}
+body:not(.m) #quitBtn::before{background:var(--red)}body:not(.m) #repairBtn::before{background:var(--gold)}
+#repairBtn::before{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z'/%3E%3C/svg%3E")}#speedBtn::before{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l7 6-7 6zM13 6l7 6-7 6z'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l7 6-7 6zM13 6l7 6-7 6z'/%3E%3C/svg%3E")}#pauseBtn::before{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 5v14M16 5v14'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 5v14M16 5v14'/%3E%3C/svg%3E")}#lightBtn::before{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z'/%3E%3C/svg%3E")}#soundBtn::before{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 9v6h4l5 4V5L8 9zM16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 9v6h4l5 4V5L8 9zM16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12'/%3E%3C/svg%3E")}#quitBtn::before{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 21V4M5 4h12l-2 4 2 4H5'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 21V4M5 4h12l-2 4 2 4H5'/%3E%3C/svg%3E")}#fsBtn::before{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5'/%3E%3C/svg%3E")}#camBtn::before{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='7'/%3E%3Cpath d='M12 2v4M12 18v4M2 12h4M18 12h4'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='7'/%3E%3Cpath d='M12 2v4M12 18v4M2 12h4M18 12h4'/%3E%3C/svg%3E")}
+body:not(.m) details.fold{border:1px solid #2f3a2b;border-radius:3px;background:rgba(0,0,0,.18)}
+body:not(.m) details.fold summary{cursor:pointer;list-style:none;padding:8px 10px;font:700 12px 'Chakra Petch',sans-serif;letter-spacing:.6px;color:#b9c7b1;display:flex;justify-content:space-between}
+body:not(.m) details.fold summary::-webkit-details-marker{display:none}
+body:not(.m) details.fold summary::after{content:'+';color:var(--acc)}body:not(.m) details.fold[open] summary::after{content:'–'}
+body:not(.m) details.fold>div{padding:0 10px 10px}
+details.fold summary{cursor:pointer;font:700 13px 'Chakra Petch',sans-serif;color:var(--mut);padding:4px 0}
+/* ===== doca de construção e habilidades sobre o mapa (computador) ===== */
+.desk{display:none}
+body:not(.m) .desk{display:flex}
+#dock{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);z-index:6;align-items:stretch;gap:10px;padding:10px 12px 9px;max-width:calc(100% - 24px);overflow-x:auto;scrollbar-width:none;
+  background:linear-gradient(180deg,rgba(32,40,29,.94),rgba(12,15,11,.96));border:1px solid #435240;border-radius:4px;
+  clip-path:polygon(14px 0,calc(100% - 14px) 0,100% 14px,100% 100%,0 100%,0 14px);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 10px 30px rgba(0,0,0,.6)}
+#dock::-webkit-scrollbar{display:none}
+#dock::before{content:'';position:absolute;left:14px;right:14px;top:0;height:2px;background:linear-gradient(90deg,transparent,var(--acc) 20%,var(--gold) 50%,var(--acc) 80%,transparent);opacity:.7}
+.dgrp{display:flex;flex-direction:column;gap:5px}
+.dlab{font:700 10px 'Chakra Petch',sans-serif;letter-spacing:2px;text-transform:uppercase;color:#8fa186;display:flex;align-items:center;gap:6px}
+.dlab::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,#3d4a37,transparent)}
+.dsep{width:1px;background:linear-gradient(180deg,transparent,#4a5a44,transparent);margin:4px 0}
+.drow{display:flex;gap:5px}
+#dock .bb{width:clamp(60px,5.2vw,82px);min-height:0;padding:4px 3px 5px;display:flex;flex-direction:column;align-items:center;gap:1px;text-align:center;position:relative;
+  background:radial-gradient(ellipse at 50% 30%,#2e3a2a,#161c14 70%);border:1px solid #3a4835;border-radius:3px;
+  clip-path:polygon(7px 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%,0 7px);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),inset 0 -14px 20px rgba(0,0,0,.4);transition:transform .1s,filter .15s,border-color .15s}
+#dock .bb canvas{width:100%;max-width:58px;aspect-ratio:1;height:auto;filter:drop-shadow(0 3px 3px rgba(0,0,0,.6));transition:transform .15s}
+#dock .bb .n{font:600 10.5px/1.1 Inter,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+#dock .bb .c{font:700 12px 'Chakra Petch',sans-serif;color:var(--gold)}
+#dock .bb kbd{top:3px;left:4px;right:auto;font:700 10px 'Chakra Petch',sans-serif;color:#cfe0c6;background:rgba(0,0,0,.55);border:1px solid #4a5a44;border-radius:2px;padding:0 4px;line-height:14px}
+#dock .bb .d{display:none}
+@media(hover:hover){#dock .bb:hover{border-color:var(--acc);transform:translateY(-3px);filter:brightness(1.15)}#dock .bb:hover canvas{transform:scale(1.08) rotate(-3deg)}}
+#dock .bb.on{border-color:var(--acc);background:radial-gradient(ellipse at 50% 30%,#3d5a2c,#18241a 70%);box-shadow:inset 0 0 14px rgba(126,217,87,.35),0 0 0 1px var(--acc)}
+#dock .bb.poor{filter:grayscale(.75) brightness(.7)}#dock .bb.poor .c{color:var(--red)}
+#tip{position:absolute;z-index:30;pointer-events:none;max-width:240px;background:rgba(14,18,13,.97);border:1px solid #4a5a44;border-radius:3px;padding:8px 10px;font-size:12px;line-height:1.4;color:var(--ink);box-shadow:0 8px 24px rgba(0,0,0,.6);opacity:0;transition:opacity .12s}
+#tip b{font:700 13px 'Chakra Petch',sans-serif;color:var(--acc);display:block}#tip i{font-style:normal;color:var(--gold);font-weight:600}
+#tip.on{opacity:1}
+#abil.desk{position:absolute;right:12px;bottom:150px;z-index:6;flex-direction:column;gap:7px;display:none}
+body:not(.m) #abil.desk{display:flex}
+#abil.desk .ab{width:178px;min-height:48px;padding:6px 44px 6px 14px;text-align:left;border-radius:3px;background:linear-gradient(90deg,rgba(40,30,22,.95),rgba(20,16,12,.92));border:1px solid #5a4630;
+  clip-path:polygon(10px 0,100% 0,100% 100%,10px 100%,0 50%);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 6px 16px rgba(0,0,0,.5)}
+#abil.desk .ab .n{font:700 13px 'Chakra Petch',sans-serif;color:#ffd9a8;letter-spacing:.3px}
+#abil.desk .ab .d{font-size:10.5px;color:#b8a48a}
+#abil.desk .ab kbd{top:50%;right:8px;transform:translateY(-50%);font:700 13px 'Chakra Petch',sans-serif;color:#ffe2b8;background:rgba(0,0,0,.45);border:1px solid #6a5238;border-radius:2px;padding:1px 6px}
+#abil.desk .ab i{background:rgba(0,0,0,.55);left:auto;right:0}
+#abil.desk .ab.ready{border-color:#d08a3a;box-shadow:inset 0 0 12px rgba(255,150,60,.25),0 6px 16px rgba(0,0,0,.5)}
+#abil.desk .ab.on{border-color:#ff8a75;background:linear-gradient(90deg,#5a2a20,#2a1410)}
+body:not(.m) .rot{bottom:auto;top:12px;left:12px}
+body:not(.m) #sel{position:fixed;left:12px;top:64px;width:310px;max-height:calc(100vh - 230px);overflow-y:auto;z-index:20;scrollbar-width:thin;box-shadow:0 12px 30px rgba(0,0,0,.6);background:linear-gradient(180deg,rgba(28,36,25,.97),rgba(16,20,15,.97));border:1px solid #445440;border-radius:3px;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
+body:not(.m) #sel .t{color:var(--acc);font-size:16px;letter-spacing:.4px}
+body:not(.m) .up{border-top:1px dashed #33402f}
+body:not(.m) .up button{color:var(--gold);font:700 12px 'Chakra Petch',sans-serif}
+body:not(.m) #sellBtn{color:#ffb3a6!important;border-color:#6a3a30!important}
+
 h1 small{display:block;font:500 13px Inter,sans-serif;color:var(--mut);margin-top:4px}
 h3{font:700 13px 'Chakra Petch',sans-serif;margin:4px 0 0;color:var(--mut)}
 .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
@@ -199,6 +278,8 @@ body.m #toast{top:110px}
   <div id="stage">
     <canvas id="gl"></canvas>
     <canvas id="cv"></canvas>
+    <div id="dock" class="desk"><div class="dgrp"><div class="dlab">Base</div><div class="drow" id="ecoBtns"></div></div><div class="dsep"></div><div class="dgrp"><div class="dlab">Defesa</div><div class="drow" id="defBtns"></div></div></div>
+    <div class="abil desk" id="abil"></div><div id="tip"></div>
     <div class="rot"><button id="rotL" aria-label="Girar câmera para a esquerda">⟲</button><button id="rotR" aria-label="Girar câmera para a direita">⟳</button></div>
     <div id="mTop" class="mob">
       <button id="mMenu" class="mbtn" aria-label="Abrir menu"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5h14M3 10h14M3 15h14"/></svg></button>
@@ -295,18 +376,12 @@ body.m #toast{top:110px}
     <div id="waveinfo"></div>
     <div class="chips" id="chips"></div>
     <button class="primary" id="nextBtn">Chamar onda agora</button>
-    <h3>Habilidades</h3>
-    <div class="abil" id="abil"></div>
     <div id="sel">
       <div class="t" id="selT"></div>
       <div class="l" id="selL"></div>
       <div id="upgs"></div>
       <button id="sellBtn"></button>
     </div>
-    <h3>Base — economia e suporte</h3>
-    <div class="grid" id="ecoBtns"></div>
-    <h3>Defesa — anel externo</h3>
-    <div class="grid" id="defBtns"></div>
     <div class="row4">
       <button id="repairBtn">Reparar</button>
       <button id="speedBtn">1x</button>
@@ -317,13 +392,10 @@ body.m #toast{top:110px}
       <button id="fsBtn">Tela cheia</button>
       <button id="camBtn">Centralizar mapa</button>
     </div>
-    <h3>Conquistas <span id="achCount"></span></h3>
-    <div class="achs" id="achList"></div>
-    <h3>Bestiário</h3>
-    <div id="beast"></div>
-    <h3>Sinergias (torres encostadas, lado a lado)</h3>
-    <div class="syn"><b>Amplificador</b>: +20% de dano nas torres encostadas. Não soma com outro Amplificador.<br><b>Criogênica + Canhão</b>: o Canhão causa +50% em zumbis congelados.<br><b>Criogênica + Railgun</b>: Railgun dispara 25% mais rápido.<br><b>Metralhadora + Metralhadora</b>: +15% de cadência.<br><b>Lente de foco</b>: torres encostadas +60% de dano e −35% de cadência. Boa para Railgun e Canhão, que vencem armadura com tiros fortes.<br><b>Acelerador</b>: zumbis no campo ficam mais rápidos e recebem +45% de dano. Coloque onde suas torres já concentram fogo.<br><b>Ideias de build</b>: horda com Tesla + Veneno + Canhão · tiro pesado com Lente + Railgun · cadência com Amplificador + Metralhadoras.</div>
-    <div class="help"><b>Clique</b> no botão e depois no mapa para construir · <b>clique numa construção</b> para melhorar · <b>botão direito / Esc</b> cancela · <b>1–0, Z X C</b> construções · <b>Q W E R</b> habilidades · <b>Espaço</b> chama a onda · <b>Del</b> vende · <b>P</b> pausa · <b>F</b> velocidade · <b>N</b> noite · <b>M</b> som</div>
+    <details class="fold"><summary>Conquistas <span id="achCount"></span></summary><div><div class="achs" id="achList"></div></div></details>
+    <details class="fold"><summary>Bestiário</summary><div><div id="beast"></div></div></details>
+    <details class="fold"><summary>Sinergias e builds</summary><div><div class="syn"><b>Amplificador</b>: +20% de dano nas torres encostadas. Não soma com outro Amplificador.<br><b>Criogênica + Canhão</b>: o Canhão causa +50% em zumbis congelados.<br><b>Criogênica + Railgun</b>: Railgun dispara 25% mais rápido.<br><b>Metralhadora + Metralhadora</b>: +15% de cadência.<br><b>Lente de foco</b>: torres encostadas +60% de dano e −35% de cadência. Boa para Railgun e Canhão, que vencem armadura com tiros fortes.<br><b>Acelerador</b>: zumbis no campo ficam mais rápidos e recebem +45% de dano. Coloque onde suas torres já concentram fogo.<br><b>Ideias de build</b>: horda com Tesla + Veneno + Canhão · tiro pesado com Lente + Railgun · cadência com Amplificador + Metralhadoras.</div></div></details>
+    <details class="fold"><summary>Atalhos</summary><div><div class="help"><b>Clique</b> no botão e depois no mapa para construir · <b>clique numa construção</b> para melhorar · <b>botão direito / Esc</b> cancela · <b>1–0, Z X C</b> construções · <b>Q W E R</b> habilidades · <b>Espaço</b> chama a onda · <b>Del</b> vende · <b>P</b> pausa · <b>F</b> velocidade · <b>N</b> noite · <b>M</b> som</div></div></details>
   </aside>
 </div>
 
@@ -1371,9 +1443,10 @@ function ring(x,y,r,col){ctx.fillStyle=`rgba(${col},.07)`;ctx.strokeStyle=`rgba(
 
 // ================= INTERFACE =================
 function buildButtons(){
-  const mk=t=>{const d=DEFS[t],k=KEYS[ORDER.indexOf(t)];return `<button class="bb" data-t="${t}"><kbd>${k}</kbd><span class="n">${d.name}</span><span class="c">$${costOf(t)}</span><span class="d">${d.desc}</span></button>`;};
+  const mk=t=>{const d=DEFS[t],k=KEYS[ORDER.indexOf(t)];return `<button class="bb" data-t="${t}"><kbd>${k}</kbd><span class="ic"></span><span class="n">${d.name}</span><span class="c">$${costOf(t)}</span><span class="d">${d.desc}</span></button>`;};
   $('ecoBtns').innerHTML=ORDER.filter(t=>DEFS[t].zone==='base').map(mk).join('');
   $('defBtns').innerHTML=ORDER.filter(t=>DEFS[t].zone==='def').map(mk).join('');
+  if(typeof BTHUMB!=='undefined')document.querySelectorAll('#dock .bb .ic').forEach(e=>{const t=e.parentNode.dataset.t;if(BTHUMB[t])e.replaceWith(iconOf(t));});
 }
 function buildBeast(){
   const box=$('beast');
@@ -1439,7 +1512,7 @@ function refreshUI(){
     el.querySelector('.d').textContent=cd>0?'recarga '+Math.ceil(cd)+' s':ABIL[k].desc;el.classList.toggle('on',S.ability===k);el.classList.toggle('ready',cd<=0);});
   document.querySelectorAll('.bb').forEach(el=>{const t=el.dataset.t;el.classList.toggle('on',S.build===t);el.classList.toggle('poor',S.money<costOf(t));el.querySelector('.c').textContent='$'+costOf(t);});
   const rc=repairCost();$('repairBtn').textContent=rc?'Reparar $'+rc:'Reparar';$('repairBtn').disabled=!rc||S.money<rc;
-  $('speedBtn').textContent='Velocidade '+S.speed+'x';$('pauseBtn').textContent=S.paused?'Continuar':'Pausar';$('lightBtn').textContent=NIGHT?'Noite: ligada':'Noite: desligada';$('soundBtn').textContent=AU.on?'Som: ligado':'Som: desligado';
+  $('speedBtn').textContent='Veloc. '+S.speed+'x';$('pauseBtn').textContent=S.paused?'Continuar':'Pausar';$('lightBtn').textContent=NIGHT?'Noite':'Dia';$('soundBtn').textContent=AU.on?'Som':'Mudo';
   refreshMobile();
   const s=S.sel,box=$('sel');
   if(!s){box.style.display='none';S.selKey='';return;}
@@ -1564,6 +1637,13 @@ function begin(daily){
 $('startForm').addEventListener('submit',ev=>{ev.preventDefault();begin(false);});
 $('dailyBtn').onclick=()=>begin(true);
 $('chestBtn').onclick=closeChest;
+{const tip=$('tip'),st=$('stage');const show=(el,html)=>{tip.innerHTML=html;tip.classList.add('on');const r=el.getBoundingClientRect(),sr=st.getBoundingClientRect();
+    const tw=tip.offsetWidth,th=tip.offsetHeight;let x=r.left-sr.left+r.width/2-tw/2;x=Math.max(8,Math.min(sr.width-tw-8,x));let y=r.top-sr.top-th-8;
+    if(el.closest('#abil')){x=r.left-sr.left-tw-10;y=r.top-sr.top+r.height/2-th/2;}tip.style.left=x+'px';tip.style.top=y+'px';};
+  st.addEventListener('pointerover',ev=>{const b=ev.target.closest('#dock .bb');const a=ev.target.closest('#abil .ab');
+    if(b){const d=DEFS[b.dataset.t];show(b,`<b>${d.name}</b>${d.desc}<br><i>$${costOf(b.dataset.t)}</i> · tecla ${KEYS[ORDER.indexOf(b.dataset.t)]}`);}
+    else if(a){const k=a.dataset.ab,A=ABIL[k];show(a,`<b>${A.name}</b>${A.desc||''}<br>Tecla ${A.key}`);}else tip.classList.remove('on');});
+  st.addEventListener('pointerleave',()=>tip.classList.remove('on'));}
 
 $('cloudLoad').onclick=cloudLoad;$('cloudCode').textContent=fmtCode(CLOUD);if(META.credits||Object.keys(META.perks).length||Object.keys(META.ach).length)cloudSave();
 $('againBtn').onclick=()=>{$('overOv').hidden=true;$('cardOv').hidden=true;$('chestOv').hidden=true;started=false;newGame();showStart();};

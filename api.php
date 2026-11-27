@@ -72,7 +72,7 @@ $name  = trim(preg_replace('/[^\p{L}\p{N} _.\-]/u', '', (string)($in['name'] ?? 
 $name  = mb_substr(preg_replace('/\s+/u', ' ', $name), 0, 16);
 $wave  = (int)($in['wave'] ?? 0);
 $kills = (int)($in['kills'] ?? 0);
-if (mb_strlen($name) < 2 || $wave < 1 || $wave > 300 || $kills < 0 || $kills > $wave * 80) {
+if (mb_strlen($name) < 2 || $wave < 1 || $wave > 300 || $kills < 0 || $kills > $wave * 400) {
     out(400, ['error' => 'Pontuação inválida']);
 }
 

@@ -211,6 +211,11 @@ body.m #mTop{display:flex;position:absolute;top:0;left:0;right:0;z-index:6;gap:6
 .mbtn{min-width:44px;min-height:44px;padding:0 10px;border-radius:10px;display:flex;align-items:center;justify-content:center}
 .mbtn svg{width:20px;height:20px}
 .mbtn.go{background:#2f5a22;border-color:#4b8a35;font-size:12px;white-space:nowrap}
+.mbtn.auto{font:700 11px 'Chakra Petch',sans-serif;padding:0 8px;color:var(--mut)}.mbtn.auto.on{color:#bff59f;border-color:#7ed957;background:#22301c}
+.autow{display:flex;align-items:center;justify-content:center;gap:8px;min-height:36px;font:600 13px 'Chakra Petch',sans-serif;letter-spacing:.3px}
+.autow .sw{width:30px;height:16px;border-radius:9px;background:#0b0e0a;border:1px solid #4a5a44;position:relative;transition:background .2s}
+.autow .sw::after{content:'';position:absolute;top:2px;left:2px;width:10px;height:10px;border-radius:50%;background:#8a9a82;transition:left .2s,background .2s}
+.autow.on{border-color:var(--acc)!important;color:#d8ffc4}.autow.on .sw{background:#2b5a1f}.autow.on .sw::after{left:16px;background:#bff59f}
 .mstat{text-align:center;line-height:1.05;min-width:44px}
 .mstat b{display:block;font:700 16px 'Chakra Petch',sans-serif;white-space:nowrap}
 .mstat small{color:var(--mut);font-size:10px}
@@ -287,6 +292,7 @@ body.m #toast{top:110px}
       <div class="mstat"><b id="mInc">0</b><small>$/s</small></div>
       <div class="mstat"><b id="mWave">0</b><small>onda</small></div>
       <div class="mcore" aria-label="Vida do QG"><i id="mCore"></i></div>
+      <button id="mAuto" class="mbtn auto" aria-label="Ondas automáticas">AUTO</button>
       <button id="mNext" class="mbtn go">Chamar</button>
       <div class="mxp"><i id="mXp"></i><span id="mXpTxt">Nv 1</span></div>
     </div>
@@ -376,6 +382,7 @@ body.m #toast{top:110px}
     <div id="waveinfo"></div>
     <div class="chips" id="chips"></div>
     <button class="primary" id="nextBtn">Chamar onda agora</button>
+    <button class="autow" id="autoBtn" title="Chama a próxima onda sozinho, 4 s depois do fim da anterior (tecla A)"><span class="sw"></span><span id="autoTxt">Ondas automáticas</span></button>
     <div id="sel">
       <div class="t" id="selT"></div>
       <div class="l" id="selL"></div>
@@ -395,7 +402,7 @@ body.m #toast{top:110px}
     <details class="fold"><summary>Conquistas <span id="achCount"></span></summary><div><div class="achs" id="achList"></div></div></details>
     <details class="fold"><summary>Bestiário</summary><div><div id="beast"></div></div></details>
     <details class="fold"><summary>Sinergias e builds</summary><div><div class="syn"><b>Amplificador</b>: +20% de dano nas torres encostadas. Não soma com outro Amplificador.<br><b>Criogênica + Canhão</b>: o Canhão causa +50% em zumbis congelados.<br><b>Criogênica + Railgun</b>: Railgun dispara 25% mais rápido.<br><b>Metralhadora + Metralhadora</b>: +15% de cadência.<br><b>Lente de foco</b>: torres encostadas +60% de dano e −35% de cadência. Boa para Railgun e Canhão, que vencem armadura com tiros fortes.<br><b>Acelerador</b>: zumbis no campo ficam mais rápidos e recebem +45% de dano. Coloque onde suas torres já concentram fogo.<br><b>Ideias de build</b>: horda com Tesla + Veneno + Canhão · tiro pesado com Lente + Railgun · cadência com Amplificador + Metralhadoras.</div></div></details>
-    <details class="fold"><summary>Atalhos</summary><div><div class="help"><b>Clique</b> no botão e depois no mapa para construir · <b>clique numa construção</b> para melhorar · <b>botão direito / Esc</b> cancela · <b>1–0, Z X C</b> construções · <b>Q W E R</b> habilidades · <b>Espaço</b> chama a onda · <b>Del</b> vende · <b>P</b> pausa · <b>F</b> velocidade · <b>N</b> noite · <b>M</b> som</div></div></details>
+    <details class="fold"><summary>Atalhos</summary><div><div class="help"><b>Clique</b> no botão e depois no mapa para construir · <b>clique numa construção</b> para melhorar · <b>botão direito / Esc</b> cancela · <b>1–0, Z X C</b> construções · <b>Q W E R</b> habilidades · <b>Espaço</b> chama a onda · <b>Del</b> vende · <b>P</b> pausa · <b>F</b> velocidade · <b>N</b> noite · <b>M</b> som · <b>A</b> ondas automáticas</div></div></details>
   </aside>
 </div>
 
@@ -922,8 +929,8 @@ function nearestB(e,R){let best=null,bd=R;
 function update(dt){
   S.money+=income()*dt;
   if(S.shake>0)S.shake=Math.max(0,S.shake-dt*20);
-  if(S.phase==='prep'){S.prep-=dt;if(S.prep<=0)startWave();}
-  else{S.waveT+=dt;while(S.queue.length&&S.queue[0].t<=S.waveT)spawn(S.queue.shift());
+  if(S.phase==='prep'){S.prep-=dt;S.prepEl=(S.prepEl||0)+dt;if(AUTO&&S.wave>0&&S.prepEl>=4&&!S.choosing&&!S.chestOpen)callWave();else if(S.prep<=0){S.prepEl=0;startWave();}}
+  else{S.prepEl=0;S.waveT+=dt;while(S.queue.length&&S.queue[0].t<=S.waveT)spawn(S.queue.shift());
     if(!S.queue.length&&!S.ens.length)endWave();}
   const radars=S.blds.filter(b=>b.type==='radar').map(b=>({c:bc(b),R:stat(b,'reveal')*TILE}));
   for(const f of S.flares)radars.push({c:{x:f.x,y:f.y},R:f.R});
@@ -1499,11 +1506,12 @@ function refreshUI(){
     else if(nt.includes('vespa'))tip=' O Canhão não acerta voadores.';
     $('waveinfo').innerHTML=`Onda <b>${S.wave+1}</b> em <b>${Math.ceil(S.prep)}s</b> · vem de <b>${dirs} ${dirs>1?'direções':'direção'}</b>`+
       (nt.length?`<br><span class="new">Novo: ${nt.map(t=>EN[t].name+' ('+EN[t].bug+')').join(', ')}.</span>${tip}`:'');
-    $('nextBtn').disabled=false;$('nextBtn').textContent='Chamar onda agora (+$'+Math.floor(S.prep)+')';
+    $('nextBtn').disabled=false;$('nextBtn').textContent=(AUTO&&S.wave>0)?'Próxima onda em '+Math.max(0,Math.ceil(4-(S.prepEl||0)))+'s (+$'+Math.floor(S.prep)+')':'Chamar onda agora (+$'+Math.floor(S.prep)+')';
   }else{
     $('waveinfo').innerHTML=`Onda <b>${S.wave}</b> em andamento · <b>${S.ens.length+S.queue.length}</b> zumbis restantes`;
     $('nextBtn').disabled=true;$('nextBtn').textContent='Onda em andamento';
   }
+  $('autoBtn').classList.toggle('on',AUTO);$('mAuto').classList.toggle('on',AUTO);$('autoTxt').textContent=AUTO?'Ondas automáticas: ligado':'Ondas automáticas: desligado';
   $('chips').innerHTML=(S.event?`<span class="chip ev">Evento: ${EVENTS[S.event].name}</span>`:'')+Object.keys(S.cards).map(k=>`<span class="chip" title="${CARDS[k].desc}">${CARDS[k].name}${S.cards[k]>1?' ×'+S.cards[k]:''}</span>`).join('');
   if(S.phase==='prep'&&S.nextEvent)$('waveinfo').innerHTML+=`<br><span class="new">Evento na próxima onda: ${EVENTS[S.nextEvent].name}.</span> ${EVENTS[S.nextEvent].desc}`;
   else if(S.event)$('waveinfo').innerHTML+=`<br><span class="new">${EVENTS[S.event].name}:</span> ${EVENTS[S.event].desc}`;
@@ -1534,6 +1542,8 @@ function upgrade(k){const s=S.sel;if(!s||!TRACKS[s.type].includes(k)||lv(s,k)>=U
   S.texts.push({x:c.x,y:c.y,txt:UPG[k].name+' '+lv(s,k)+'/'+UPG[k].max,life:1.2,max:1.2,col:'#ffd23a',big:1});sfxLevel();refreshUI();}
 function sell(){const s=S.sel;if(!s||s.type==='core')return;S.money+=sellVal(s);const c=bc(s);S.texts.push({x:c.x,y:c.y,txt:'+'+sellVal(s),life:.9,col:'#f5c542'});removeB(s);refreshUI();}
 function repair(){const rc=repairCost();if(!rc||S.money<rc)return;S.money-=rc;for(const b of S.blds)b.hp=b.maxhp;refreshUI();}
+let AUTO=false;try{AUTO=localStorage.getItem('enxame_auto')==='1';}catch(e){}
+function setAuto(v){AUTO=v;try{localStorage.setItem('enxame_auto',v?'1':'0');}catch(e){}refreshUI();}
 function callWave(){if(S.phase!=='prep'||S.over)return;S.money+=Math.floor(S.prep);S.prep=0;startWave();refreshUI();}
 function buildAbil(){$('abil').innerHTML=Object.keys(ABIL).map(k=>`<button class="ab" data-ab="${k}"><i></i><kbd>${ABIL[k].key}</kbd><span class="n">${ABIL[k].name}</span><span class="d"></span></button>`).join('');}
 function setAbility(k){if(!S||!started||S.over||S.ab[k]>0)return;if(DM('sem_hab')){S.texts.push({x:CCX,y:CCY,txt:'Habilidades desligadas hoje',life:1.2,col:'#ff8a75'});return;}S.ability=S.ability===k?null:k;S.pending=null;if(S.ability){S.build=null;S.sel=null;}refreshUI();}
@@ -1660,6 +1670,7 @@ document.addEventListener('keydown',ev=>{
   else if(k===' '){ev.preventDefault();callWave();}
   else if(k==='p'||k==='P'){S.paused=!S.paused;refreshUI();}
   else if(k==='n'||k==='N')toggleNight();
+  else if(k==='a'||k==='A')setAuto(!AUTO);
   else if(k==='m'||k==='M'){audioInit();setSound(!AU.on);}
   else if(k==='Delete'||k==='Backspace')sell();
   else if(k==='f'||k==='F'){S.speed=S.speed>=3?1:S.speed+1;refreshUI();}
@@ -1674,6 +1685,7 @@ function closeDrawer(){$('side').classList.remove('open');$('mBack').classList.r
 $('mMenu').onclick=openDrawer;$('mBack').onclick=closeDrawer;$('drawerClose').onclick=closeDrawer;
 $('mClose').onclick=()=>{if(S){S.sel=null;refreshUI();}};
 $('mNext').onclick=()=>{if(S)callWave();};
+$('autoBtn').onclick=()=>setAuto(!AUTO);$('mAuto').onclick=()=>setAuto(!AUTO);
 $('camBtn').onclick=()=>{camReset();closeDrawer();};
 $('fsBtn').onclick=()=>{const d=document.documentElement;try{const r=(d.requestFullscreen||d.webkitRequestFullscreen).call(d);if(r&&r.catch)r.then(()=>{try{screen.orientation.lock('landscape').catch(()=>{});}catch(e){}}).catch(()=>{});}catch(e){}closeDrawer();};
 function buildMobile(){

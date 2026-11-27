@@ -1633,7 +1633,7 @@ function begin(daily){
   const n=$('nameIn').value.trim().replace(/[^\p{L}\p{N} _.\-]/gu,'').slice(0,16);
   if(n.length<2){$('nameErr').textContent='Use de 2 a 16 letras ou números.';return;}
   PLAYER=n;try{localStorage.setItem('enxame_name',n);}catch(e){}
-  audioInit();newGame(daily);$('startOv').hidden=true;started=true;camReset();if(daily)S.banner={txt:'Desafio diário',sub:DMODS[S.dmod].name+': '+DMODS[S.dmod].desc,life:3.2};}
+  audioInit();newGame(daily);$('startOv').hidden=true;started=true;camReset();try{R3.compile(SC,CAMR);}catch(e){}if(daily)S.banner={txt:'Desafio diário',sub:DMODS[S.dmod].name+': '+DMODS[S.dmod].desc,life:3.2};}
 $('startForm').addEventListener('submit',ev=>{ev.preventDefault();begin(false);});
 $('dailyBtn').onclick=()=>begin(true);
 $('chestBtn').onclick=closeChest;
@@ -1985,6 +1985,11 @@ const ringD=(wx,wz)=>Math.max(Math.abs(wx+COLS/2-CX-.5),Math.abs(wz+ROWS/2-CY-.5
 let PRNG=12345;const pr=()=>(PRNG=(PRNG*16807)%2147483647)/2147483647;
 function noise2(x,y){const s=Math.sin(x*1.7+Math.sin(y*.9)*1.3)+Math.sin(y*1.3+Math.sin(x*.7)*1.1)+Math.sin((x+y)*.45);return s/3;}
 let GRASS=null;
+function bakeStatic(roots){const BU=THREE.BufferGeometryUtils;if(!BU||!roots.length)return;const by=new Map();
+  for(const r of roots){r.updateMatrixWorld(true);r.traverse(c=>{if(!c.isMesh)return;let g=c.geometry.index?c.geometry.clone():c.geometry.clone();if(!g.index)return;g.applyMatrix4(c.matrixWorld);
+    for(const k of Object.keys(g.attributes))if(!['position','normal','uv'].includes(k))g.deleteAttribute(k);if(!g.attributes.uv)return;const key=c.material.uuid;if(!by.has(key))by.set(key,{m:c.material,g:[]});by.get(key).g.push(g);});}
+  let ok=true;const out=[];for(const {m,g} of by.values()){const geo=BU.mergeBufferGeometries(g);if(!geo){ok=false;break;}const mm=new THREE.Mesh(geo,m);mm.castShadow=SHADOW;mm.receiveShadow=true;mm.matrixAutoUpdate=false;out.push(mm);}
+  if(!ok)return;for(const r of roots){r.parent&&r.parent.remove(r);}for(const mm of out)SC.add(mm);}
 if(QF.grass){
   const bg_=new THREE.BufferGeometry(),P=[],Cc=[],I=[],segs=3;
   for(let i=0;i<=segs;i++){const t=i/segs,w=.03*(1-t*.8),bend=t*t*.06;P.push(-w,t,bend, w,t,bend);const sh=.32+t*.5;Cc.push(sh,sh,sh,sh,sh,sh);}
@@ -2006,6 +2011,7 @@ if(QF.grass){
     const hgt=(.10+pr()*.16)*(.7+dns*.6);DUM.position.set(x,0,z);DUM.rotation.set((pr()-.5)*.3,pr()*TAU,(pr()-.5)*.3);DUM.scale.set(1+pr(),hgt,1);DUM.updateMatrix();GRASS.setMatrixAt(n,DUM.matrix);
     const c=cols[(pr()*cols.length)|0];TC.setRGB(c[0]*(.8+pr()*.4),c[1]*(.8+pr()*.4),c[2]);GRASS.setColorAt(n,TC);n++;}
   GRASS.count=n;GRASS.userData.max=n;SC.add(GRASS);}
+const PROPS=[];
 if(QF.props){
   // pedras com formato irregular
   const rg=new THREE.IcosahedronGeometry(1,QI>=2?2:1);const pa=rg.attributes.position;
@@ -2022,13 +2028,14 @@ if(QF.props){
     if(i%3){const w=.26+pr()*.1,h=.32+pr()*.18;msh(G3.box(w,h,.08),stone,0,h/2-.03,0,0,0,0,t);msh(new THREE.CylinderGeometry(w/2,w/2,.08,sg(12),1,false,0,Math.PI),stone,0,h-.03,0,Math.PI/2,0,Math.PI/2,t);
       msh(G3.box(w*.9,.05,.05),moss,0,.02,.03,0,0,0,t);}
     else{msh(G3.box(.06,.46,.06),stone,0,.2,0,0,0,0,t);msh(G3.box(.26,.06,.06),stone,0,.32,0,0,0,0,t);}
-    SC.add(t);}
+    SC.add(t);PROPS.push(t);}
   // árvores secas em volta do mapa
   const bark=grime(new THREE.MeshStandardMaterial({color:0x2a231c,roughness:.95,envMapIntensity:.3}),.5,6);
   const branch=(par,len,rad,depth)=>{const g=new THREE.Group();msh(new THREE.CylinderGeometry(rad*.55,rad,len,sg(6)),bark,0,len/2,0,0,0,0,g);par.add(g);
     if(depth>0){const k=2+((pr()*2)|0);for(let i=0;i<k;i++){const c=branch(g,len*(.55+pr()*.25),rad*.6,depth-1);c.position.y=len*(.55+pr()*.4);c.rotation.set((pr()-.5)*1.6,pr()*TAU,(pr()-.5)*1.6);}}return g;};
   for(let i=0;i<34;i++){const a=pr()*TAU,ex=COLS/2+2+pr()*9,ez=ROWS/2+2+pr()*9;const x=Math.cos(a)*ex,z=Math.sin(a)*ez;
-    const t=branch(SC,1.4+pr()*1.6,.11+pr()*.07,QI>=2?3:2);t.position.set(x,0,z);t.rotation.y=pr()*TAU;}
+    const t=branch(SC,1.4+pr()*1.6,.11+pr()*.07,QI>=2?3:2);t.position.set(x,0,z);t.rotation.y=pr()*TAU;PROPS.push(t);}
+  bakeStatic(PROPS);rocks.matrixAutoUpdate=false;rocks.updateMatrix();
 }
 if(QF.mist){MIST=[];const ft=new THREE.CanvasTexture(fog);ft.wrapS=ft.wrapT=THREE.RepeatWrapping;
   for(const [y,op,rep] of[[.14,.11,1.2],[.34,.07,.8],[.62,.04,.6]]){const m=new THREE.Mesh(new THREE.PlaneGeometry(COLS+30,ROWS+30),new THREE.MeshBasicMaterial({map:ft.clone(),transparent:true,opacity:op,depthWrite:false,color:0x8fa8c8}));
@@ -2036,7 +2043,14 @@ if(QF.mist){MIST=[];const ft=new THREE.CanvasTexture(fog);ft.wrapS=ft.wrapT=THRE
 // ---- criaturas realistas (modelos animados do Mixamo) nas mais próximas da câmera ----
 const REAL={map:{guerreiro:{f:'zombie',h:1.0},tanque:{f:'mutant',h:1.15,tint:0x8a7060},rainha:{f:'mutant',h:1.05,tint:0xff5a40}},cap:MOB3?[0,6,12,20][QI]:[0,14,36,60][QI],src:{},free:{},active:new Map(),dying:new Map(),lastT:0};
 if(REAL.cap&&THREE.GLTFLoader&&THREE.SkeletonUtils){const L=new THREE.GLTFLoader();
-  for(const f of ['zombie','mutant'])L.load('models/'+f+'.glb',g=>{g.scene.updateMatrixWorld(true);const bb=new THREE.Box3().setFromObject(g.scene);REAL.src[f]={scene:g.scene,clips:g.animations,H:bb.max.y-bb.min.y};REAL.free[f]=[];},undefined,()=>{});}
+  for(const f of ['zombie','mutant'])L.load('models/'+f+'.glb',g=>{joinSkinned(g.scene);g.scene.updateMatrixWorld(true);const bb=new THREE.Box3().setFromObject(g.scene);REAL.src[f]={scene:g.scene,clips:g.animations,H:bb.max.y-bb.min.y};REAL.free[f]=[];},undefined,()=>{});}
+function joinSkinned(root){const BU=THREE.BufferGeometryUtils;if(!BU)return;const by=new Map();
+  root.traverse(c=>{if(c.isSkinnedMesh&&!Array.isArray(c.material)){const k=c.material.uuid+'|'+c.parent.uuid;if(!by.has(k))by.set(k,[]);by.get(k).push(c);}});
+  for(const L of by.values()){if(L.length<2)continue;const f=L[0];let geo=null;const flat=gm=>{for(const k of Object.keys(gm.attributes)){const at=gm.attributes[k];if(!at.isInterleavedBufferAttribute)continue;const d=at.data,n=at.count,sz=at.itemSize,arr=new d.array.constructor(n*sz);
+      for(let i=0;i<n;i++)for(let j=0;j<sz;j++)arr[i*sz+j]=d.array[i*d.stride+at.offset+j];gm.setAttribute(k,new THREE.BufferAttribute(arr,sz,at.normalized));}return gm;};
+    try{geo=BU.mergeBufferGeometries(L.map(m=>flat(m.geometry)));}catch(e){}if(!geo)continue;
+    const sm=new THREE.SkinnedMesh(geo,f.material);sm.name=f.name;sm.position.copy(f.position);sm.quaternion.copy(f.quaternion);sm.scale.copy(f.scale);f.parent.add(sm);sm.bind(f.skeleton,f.bindMatrix);
+    for(const m of L){m.parent.remove(m);m.geometry.dispose();}}}
 function realGet(type){const m=REAL.map[type],src=REAL.src[m.f];if(!src)return null;const fr=REAL.free[m.f];let o=fr.pop();
   if(!o){const root=THREE.SkeletonUtils.clone(src.scene);const mats=[];root.traverse(c=>{if(c.isMesh){c.castShadow=SHADOW;c.receiveShadow=true;c.frustumCulled=false;c.material=[].concat(c.material).map(mm=>{const k=mm.clone();k.envMapIntensity=.9;if(QI)rimify(k,1.3,'.12,.18,.32');mats.push(k);return k;});if(c.material.length===1)c.material=c.material[0];}});
     const mixer=new THREE.AnimationMixer(root),acts={};for(const cl of src.clips)acts[cl.name]=mixer.clipAction(cl);acts.attack&&(acts.attack.timeScale=1.4);acts.roar&&(acts.roar.setLoop(THREE.LoopOnce),acts.roar.clampWhenFinished=true);
@@ -2270,7 +2284,7 @@ function render3D(now){
   if(DEBUG){const fr=render3D.lt?now-render3D.lt:16;render3D.lt=now;if(fr>0&&fr<1000)PF.fps+=(1000/fr-PF.fps)*.05;const inf=R3.info.render;
     const L=[`FPS ${PF.fps.toFixed(0)}  ${QN}  px ${R3.getPixelRatio().toFixed(2)}  cortes ${DQ.step}`,`lógica ${PF.upd.toFixed(1)}ms  criaturas ${PF.ens.toFixed(1)}ms`,`efeitos ${PF.fx.toFixed(1)}ms  chão ${PF.dyn.toFixed(1)}ms`,`desenho ${PF.gpu.toFixed(1)}ms  hud ${PF.ov.toFixed(1)}ms`,
       `inimigos ${S.ens.length}  realistas ${REAL.active.size}  fx ${S.fx.length}`,`draw ${inf.calls}  tri ${(inf.triangles/1000).toFixed(0)}k`];
-    ctx.font='600 11px monospace';ctx.textAlign='left';ctx.fillStyle='rgba(0,0,0,.7)';const y0=document.body.classList.contains('m')?64:8;ctx.fillRect(4,y0,262,L.length*14+6);ctx.fillStyle='#9f9';L.forEach((l,i)=>ctx.fillText(l,8,y0+14+i*14));}
+    ctx.font='600 11px monospace';ctx.textAlign='left';ctx.fillStyle='rgba(0,0,0,.7)';const y0=document.body.classList.contains('m')?64:64;ctx.fillRect(4,y0,262,L.length*14+6);ctx.fillStyle='#9f9';L.forEach((l,i)=>ctx.fillText(l,8,y0+14+i*14));}
 }
 // ---- miniaturas 3D para bestiário e barra de construção ----
 const THUMB={},BTHUMB={};

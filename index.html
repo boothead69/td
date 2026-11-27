@@ -289,7 +289,7 @@ body.m #toast{top:110px}
     <div id="mTop" class="mob">
       <button id="mMenu" class="mbtn" aria-label="Abrir menu"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5h14M3 10h14M3 15h14"/></svg></button>
       <div class="mstat"><b id="mMoney">0</b><small>dinheiro</small></div>
-      <div class="mstat"><b id="mInc">0</b><small>$/s</small></div>
+      <div class="mstat"><b id="mInc">0</b><small>$/onda</small></div>
       <div class="mstat"><b id="mWave">0</b><small>onda</small></div>
       <div class="mcore" aria-label="Vida do QG"><i id="mCore"></i></div>
       <button id="mAuto" class="mbtn auto" aria-label="Ondas automáticas">AUTO</button>
@@ -374,7 +374,7 @@ body.m #toast{top:110px}
     <h1>ENXAME<small>defesa 360° contra a horda</small></h1>
     <div class="stats">
       <div class="stat"><b id="money">0</b><small>dinheiro</small></div>
-      <div class="stat"><b id="inc">0</b><small>$/s</small></div>
+      <div class="stat"><b id="inc">0</b><small>$/onda</small></div>
       <div class="stat"><b id="wave">0</b><small>onda</small></div>
     </div>
     <div class="bar"><i id="coreFill"></i><span id="coreTxt">QG</span></div>
@@ -401,8 +401,8 @@ body.m #toast{top:110px}
     </div>
     <details class="fold"><summary>Conquistas <span id="achCount"></span></summary><div><div class="achs" id="achList"></div></div></details>
     <details class="fold"><summary>Bestiário</summary><div><div id="beast"></div></div></details>
-    <details class="fold"><summary>Sinergias e builds</summary><div><div class="syn"><b>Amplificador</b>: +20% de dano nas torres encostadas. Não soma com outro Amplificador.<br><b>Criogênica + Canhão</b>: o Canhão causa +50% em zumbis congelados.<br><b>Criogênica + Railgun</b>: Railgun dispara 25% mais rápido.<br><b>Metralhadora + Metralhadora</b>: +15% de cadência.<br><b>Lente de foco</b>: torres encostadas +60% de dano e −35% de cadência. Boa para Railgun e Canhão, que vencem armadura com tiros fortes.<br><b>Acelerador</b>: zumbis no campo ficam mais rápidos e recebem +45% de dano. Coloque onde suas torres já concentram fogo.<br><b>Ideias de build</b>: horda com Tesla + Veneno + Canhão · tiro pesado com Lente + Railgun · cadência com Amplificador + Metralhadoras.</div></div></details>
-    <details class="fold"><summary>Atalhos</summary><div><div class="help"><b>Clique</b> no botão e depois no mapa para construir · <b>clique numa construção</b> para melhorar · <b>botão direito / Esc</b> cancela · <b>1–0, Z X C</b> construções · <b>Q W E R</b> habilidades · <b>Espaço</b> chama a onda · <b>Del</b> vende · <b>P</b> pausa · <b>F</b> velocidade · <b>N</b> noite · <b>M</b> som · <b>A</b> ondas automáticas</div></div></details>
+    <details class="fold"><summary>Sinergias e builds</summary><div><div class="syn"><b>Posto de comando</b>: torres no raio ganham +15% de alcance e de cadência. Melhore para enxergar invisíveis ou ter desconto.<br><b>Marca do caçador</b>: zumbis no raio levam +25% de dano e perdem armadura. Coloque onde as torres já concentram fogo.<br><b>Criogênica + Canhão</b>: o Canhão causa +50% em zumbis congelados.<br><b>Criogênica + Railgun</b>: Railgun dispara 25% mais rápido.<br><b>Metralhadora + Metralhadora</b>: +15% de cadência.<br><b>Veneno + Lança-chamas</b> (encostados): queimadura +50%.<br><b>Economia</b>: Casas, Mina, Banco e QG pagam no fim de cada onda. Casa destruída não paga.<br><b>Ideias de build</b>: Quartel + Lança-chamas segurando a horda · Marca + Railgun contra blindados · Comando no meio de 4 a 6 torres</div></div></details>
+    <details class="fold"><summary>Atalhos</summary><div><div class="help"><b>Clique</b> no botão e depois no mapa para construir · <b>clique numa construção</b> para melhorar · <b>botão direito / Esc</b> cancela · <b>1–0, Z X C V B G</b> construções · <b>Q W E R</b> habilidades · <b>Espaço</b> chama a onda · <b>Del</b> vende · <b>P</b> pausa · <b>F</b> velocidade · <b>N</b> noite · <b>M</b> som · <b>A</b> ondas automáticas</div></div></details>
   </aside>
 </div>
 
@@ -417,22 +417,25 @@ const TAU=Math.PI*2;
 
 const DEFS={
   core:{name:'QG',hp:700,income:2,range:3.5,rate:2,dmg:6,air:true,detect:true,light:230,lcol:'126,217,87'},
-  fazenda:{name:'Fazenda',zone:'base',cost:40,hp:90,income:1.5,desc:'+1,5 $/s',light:60,lcol:'180,220,120'},
-  gerador:{name:'Gerador',zone:'base',cost:130,hp:140,income:5,desc:'+5 $/s',light:95,lcol:'245,197,66'},
+  casa:{name:'Casa',zone:'base',cost:50,hp:90,wave:38,desc:'+$38 no fim de cada onda. Destruída, não paga.',light:60,lcol:'255,200,130'},
+  mina:{name:'Mina de ouro',zone:'base',cost:150,hp:150,desc:'Paga $220 na 1ª onda e $35 a menos a cada onda (mínimo $30).',light:80,lcol:'245,197,66'},
+  banco:{name:'Banco',zone:'base',cost:170,hp:160,desc:'Rende 12% do seu dinheiro guardado por onda (até $80).',light:75,lcol:'255,230,150'},
+  posto:{name:'Posto de troca',zone:'base',cost:120,hp:110,desc:'Zumbis mortos a até 7 casas valem +40% de dinheiro.',light:70,lcol:'255,170,90'},
   radar:{name:'Radar',zone:'base',cost:100,hp:100,reveal:7,desc:'Revela invisíveis',light:70,lcol:'92,200,255'},
   muro:{name:'Barricada',zone:'def',cost:15,hp:320,desc:'Segura a horda',light:0},
   metral:{name:'Metralhadora',zone:'def',cost:50,hp:160,range:3.4,rate:5,dmg:5,air:true,col:'#b0bec5',desc:'Rápida, dano baixo',light:85,lcol:'255,230,170'},
   crio:{name:'Criogênica',zone:'def',cost:90,hp:140,range:3,rate:1,dmg:4,splash:1.1,slow:true,air:true,col:'#5cc8ff',desc:'Lentidão em área, revela',light:85,lcol:'92,200,255'},
   canhao:{name:'Canhão',zone:'def',cost:140,hp:220,range:4,rate:.7,dmg:45,splash:1.3,air:false,col:'#d7a86e',desc:'Área; não acerta voadores',light:80,lcol:'255,190,120'},
   railgun:{name:'Railgun',zone:'def',cost:240,hp:130,range:7.5,rate:.45,dmg:170,air:true,col:'#d68cff',desc:'Longo alcance, fura armadura',light:85,lcol:'214,140,255'},
-  amp:{name:'Amplificador',zone:'def',cost:180,hp:90,desc:'Fortalece torres encostadas',light:75,lcol:'255,120,200'},
   tesla:{name:'Tesla',zone:'def',cost:120,hp:150,range:3,rate:.9,dmg:14,air:true,col:'#7fd8ff',desc:'Raio em cadeia: até 5 zumbis',light:85,lcol:'130,210,255'},
   veneno:{name:'Veneno',zone:'def',cost:110,hp:140,range:3.2,rate:.8,dmg:3,splash:1.2,air:false,col:'#8fe04a',desc:'Nuvem tóxica que se espalha',light:70,lcol:'150,230,80'},
-  foco:{name:'Lente de foco',zone:'def',cost:160,hp:90,desc:'Encostadas: +60% dano, −35% cadência',light:70,lcol:'255,180,80'},
-  acel:{name:'Acelerador',zone:'def',cost:130,hp:110,aura:3,desc:'Zumbis +35% rápidos e +45% de dano',light:80,lcol:'255,80,80'},
+  chama:{name:'Lança-chamas',zone:'def',cost:100,hp:170,range:2.4,rate:5,dmg:3,air:false,col:'#ff8a3a',desc:'Cone de fogo curto que deixa zumbis queimando',light:90,lcol:'255,140,60'},
+  quartel:{name:'Quartel',zone:'def',cost:130,hp:200,desc:'3 soldados seguram e lutam com os zumbis por perto',light:70,lcol:'200,210,255'},
+  comando:{name:'Posto de comando',zone:'def',cost:150,hp:120,aura:3,desc:'Torres a até 3 casas: +15% de alcance e de cadência',light:80,lcol:'126,217,87'},
+  marca:{name:'Marca do caçador',zone:'def',cost:140,hp:110,aura:3,desc:'Zumbis a até 3 casas levam +25% de dano e perdem 3 de armadura',light:80,lcol:'200,110,255'},
 };
-const ORDER=['fazenda','gerador','radar','muro','metral','crio','canhao','railgun','amp','tesla','veneno','foco','acel'];
-const KEYS=['1','2','3','4','5','6','7','8','9','0','Z','X','C'];
+const ORDER=['casa','mina','banco','posto','radar','muro','metral','crio','canhao','railgun','tesla','veneno','chama','quartel','comando','marca'];
+const KEYS=['1','2','3','4','5','6','7','8','9','0','Z','X','C','V','B','G'];
 
 // ---------- cartas (valem só na partida) ----------
 const CARDS={
@@ -449,7 +452,7 @@ const CARDS={
   almas:{name:'Colheita de almas',desc:'+$1 por abate.',max:3},
   fabrica:{name:'Fábrica eficiente',desc:'Construções ficam 12% mais baratas.',max:2},
   furia:{name:'QG em fúria',desc:'O QG causa o dobro de dano e ganha +1,5 de alcance.',max:1},
-  arco:{name:'Arco elétrico',desc:'Geradores dão choque em até 3 zumbis a 3 casas de distância.',max:2},
+  arco:{name:'Arco elétrico',desc:'Minas de ouro dão choque em até 3 zumbis a 3 casas de distância.',max:2},
   executor:{name:'Executor',desc:'+60% de dano em zumbis com menos de 30% de vida.',max:1},
 };
 const C=k=>(S&&S.cards&&S.cards[k])||0;
@@ -509,6 +512,7 @@ async function cloudLoad(){const c=$('cloudIn').value.toUpperCase().replace(/[^A
     $('cloudCode').textContent=fmtCode(CLOUD);$('cloudIn').value='';$('cloudSt').textContent='· progresso carregado: '+META.credits+' créditos';renderAch();renderShops();}
   catch(e){$('cloudSt').textContent='· sem conexão com o servidor (só funciona no site)';}}
 const pk=k=>(S&&S.daily)?0:(META.perks[k]||0);
+function costAt(t,x,y){const base=costOf(t);const cx=(x+.5)*TILE,cy=(y+.5)*TILE;for(const b of S.blds)if(b.type==='comando'&&lv(b,'comercio')){const c=bc(b);if(Math.hypot(cx-c.x,cy-c.y)<=stat(b,'aura')*TILE)return Math.round(base*.85);}return base;}
 function costOf(t){return Math.round(DEFS[t].cost*(1-.06*pk('engenharia'))*(1-.12*C('fabrica')));}
 
 // ---------- melhorias ----------
@@ -517,31 +521,41 @@ const UPG={
   range:{name:'Alcance',desc:'+12% de alcance por nível',max:5,m:.9},
   rate:{name:'Velocidade',desc:'+18% de cadência por nível',max:5,m:1.1},
   armor:{name:'Blindagem',desc:'+35% de vida e regeneração',max:5,m:.7},
-  income:{name:'Produção',desc:'+60% de renda por nível',max:5,m:1},
+  income:{name:'Produção',desc:'+35% do pagamento por onda',max:5,m:1},
+  veio:{name:'Novo veio',desc:'A mina volta a pagar o máximo',max:3,m:.9},
+  cofre:{name:'Cofre maior',desc:'+$60 no limite de juros',max:4,m:1},
+  pregao:{name:'Pregão',desc:'+15% de dinheiro por abate no raio',max:3,m:1},
+  raio:{name:'Raio de comando',desc:'+0,75 de raio',max:3,m:.9},
+  tambores:{name:'Tambores de guerra',desc:'+8% de cadência extra no raio',max:3,m:1.1},
+  radarc:{name:'Radar de campo',desc:'Torres no raio enxergam invisíveis',max:1,m:1.4},
+  comercio:{name:'Intendência',desc:'Construir e melhorar no raio custa 15% menos',max:1,m:1.5},
+  quebra:{name:'Quebra-blindagem',desc:'Tira +2 de armadura por nível',max:2,m:1.1},
+  napalm:{name:'Napalm',desc:'+40% de dano da queimadura',max:3,m:1.1},
+  tropa:{name:'Mais soldados',desc:'+1 soldado por nível',max:2,m:1.3},
+  treino:{name:'Treinamento',desc:'Soldados +35% de vida e voltam mais rápido',max:3,m:1},
   reveal:{name:'Varredura',desc:'+1,5 de raio de revelação',max:4,m:.8},
   detect:{name:'Detector',desc:'A torre enxerga invisíveis',max:1,m:1.6},
   pierce:{name:'Munição perfurante',desc:'Ignora 2 de armadura por nível',max:3,m:1.2},
   chill:{name:'Congelamento',desc:'Lentidão mais forte e mais longa',max:3,m:1.1},
   blast:{name:'Carga explosiva',desc:'+20% de raio da explosão',max:3,m:1.1},
   rail:{name:'Transpassar',desc:'Atravessa +1 zumbi por nível',max:3,m:1.2},
-  power:{name:'Potência',desc:'+5% no bônus de dano do Amplificador',max:4,m:1},
   chainup:{name:'Arco extra',desc:'O raio pula para +1 zumbi por nível',max:3,m:1.1},
   toxina:{name:'Toxina',desc:'+40% de dano do veneno por nível',max:3,m:1.1},
-  lente:{name:'Lente polida',desc:'+10% no bônus de dano da Lente',max:3,m:1},
-  campo:{name:'Campo ampliado',desc:'+0,5 de raio e +10% de dano recebido',max:3,m:1},
+  campo:{name:'Campo ampliado',desc:'+0,5 de raio e +8% de dano recebido',max:3,m:1},
 };
 const TRACKS={
   core:['dmg','range','rate','armor','income'],
-  fazenda:['income','armor'], gerador:['income','armor'], radar:['reveal','armor'], muro:['armor'],
+  casa:['income','armor'], mina:['veio','armor'], banco:['cofre','armor'], posto:['pregao','armor'], radar:['reveal','armor'], muro:['armor'],
   metral:['dmg','range','rate','pierce','detect','armor'],
   crio:['dmg','range','rate','chill','detect','armor'],
   canhao:['dmg','range','rate','blast','detect','armor'],
   railgun:['dmg','range','rate','rail','detect','armor'],
-  amp:['power','armor'],
   tesla:['dmg','range','rate','chainup','detect','armor'],
   veneno:['dmg','range','rate','toxina','detect','armor'],
-  foco:['lente','armor'],
-  acel:['campo','armor'],
+  chama:['dmg','range','rate','napalm','detect','armor'],
+  quartel:['dmg','tropa','treino','armor'],
+  comando:['raio','tambores','radarc','comercio','armor'],
+  marca:['campo','quebra','armor'],
 };
 
 const EN={
@@ -749,7 +763,7 @@ function newGame(daily){
      strikes:[],flares:[],pools:[],booms:[],crates:[],links:[],stormT:0,crateT:0,
      dying:[],spikes:[],beams:[],combo:0,comboT:0,comboShow:0,bestCombo:0,slowmo:0,flash:null,
      daily:!!daily,dmod:daily?todayMod():null,xp:0,lvl:1,xpNeed:xpNeedFor(1),lvlQueue:0,gems:[],chests:[],chestOpen:null,bossKills:0,jackpots:0,achT:0};
-  S.money=150+50*pk('capital')+(DM('rico')?250:0)+(DM('sem_hab')?150:0);
+  S.money=220+50*pk('capital')+(DM('rico')?250:0)+(DM('sem_hab')?150:0);
   const core=mkB('core',CX-1,CY-1,3,3);core.maxhp=core.hp=Math.round(DEFS.core.hp*(1+.15*pk('qg')));addB(core);S.core=core;
   planSectors(1);
   buildButtons();buildBeast();refreshUI();
@@ -761,11 +775,14 @@ const lv=(b,k)=>b.u[k]||0;
 function adj4(b){const r=[];for(const [dx,dy] of[[1,0],[-1,0],[0,1],[0,-1]]){const x=b.x+dx,y=b.y+dy;if(x>=0&&y>=0&&x<COLS&&y<ROWS){const o=S.grid[y][x];if(o&&o!==b&&!r.includes(o))r.push(o);}}return r;}
 function recalcSyn(){
   if(!S)return;S.links=[];
-  for(const b of S.blds)b.syn={amp:0,thermal:0,cross:0,superc:0,focus:0};
+  for(const b of S.blds)b.syn={cmd:0,thermal:0,cross:0,superc:0,napalm:0,cmdDet:0,disc:0};
+  const cmds=S.blds.filter(b=>b.type==='comando').map(o=>({o,c:bc(o),R:stat(o,'aura')*TILE}));
+  for(const b of S.blds){if(b.type==='comando'||b.type==='core')continue;const c=bc(b);
+    for(const m of cmds){if(Math.hypot(c.x-m.c.x,c.y-m.c.y)>m.R)continue;if(DEFS[b.type].range||b.type==='quartel'){const v=.15+.08*lv(m.o,'tambores');if(v>b.syn.cmd)b.syn.cmd=v;if(lv(m.o,'radarc'))b.syn.cmdDet=1;S.links.push([m.o,b,'126,217,87']);}
+      if(lv(m.o,'comercio'))b.syn.disc=1;}}
   for(const b of S.blds){if(!DEFS[b.type].range||b.type==='core')continue;
     for(const o of adj4(b)){
-      if(o.type==='amp'){const v=.2+.05*lv(o,'power');if(v>b.syn.amp)b.syn.amp=v;S.links.push([o,b,'255,120,200']);}
-      if(o.type==='foco'){const v=.6+.1*lv(o,'lente');if(v>b.syn.focus)b.syn.focus=v;S.links.push([o,b,'255,180,80']);}
+      if(b.type==='chama'&&o.type==='veneno'){b.syn.napalm=1;S.links.push([o,b,'255,160,60']);}
       if(b.type==='canhao'&&o.type==='crio'){b.syn.thermal=1;S.links.push([o,b,'92,200,255']);}
       if(b.type==='railgun'&&o.type==='crio'){b.syn.superc=1;S.links.push([o,b,'214,140,255']);}
       if(b.type==='metral'&&o.type==='metral'){b.syn.cross=1;if(b.id<o.id)S.links.push([o,b,'255,230,150']);}
@@ -778,6 +795,8 @@ const SPECS={
   railgun:{a:{n:'Canhão de íons',d:'Dano ×2,3 e atravessa +3 zumbis'},b:{n:'Rajada',d:'Cadência ×2,6, dano −35%'}},
   tesla:{a:{n:'Tempestade',d:'Pula para +4 zumbis e quase não perde força'},b:{n:'Sobrecarga',d:'Dano ×2 e paralisa os atingidos por 0,5 s'}},
   veneno:{a:{n:'Praga',d:'Área da nuvem ×2 e o veneno dura 7 s'},b:{n:'Ácido',d:'Veneno ×2,5 e derrete 3 de armadura'}},
+  chama:{a:{n:'Dragão',d:'Alcance +60% e cone bem mais largo'},b:{n:'Fósforo branco',d:'Queimadura ×2,5 e ignora armadura'}},
+  quartel:{a:{n:'Cavaleiros',d:'Soldados com 2,5× de vida e +60% de dano'},b:{n:'Atiradores',d:'Soldados atiram de longe (não seguram mais a horda)'}},
 };
 const SPEC_AT=6;
 const sp=(b,k)=>b.spec===k;
@@ -791,16 +810,25 @@ function stat(b,k){const d=DEFS[b.type];const m=statBase(b,k,d);
   if(T==='railgun'){if(A){if(k==='dmg')return m*2.3;if(k==='hits')return m+3;}else{if(k==='rate')return m*2.6;if(k==='dmg')return m*.65;}}
   if(T==='tesla'){if(A&&k==='chain')return m+4;if(!A&&k==='dmg')return m*2;}
   if(T==='veneno'&&!A&&k==='poison')return m*2.5;
+  if(T==='chama'){if(A&&k==='range')return m*1.6;if(!A&&k==='burn')return m*2.5;}
+  if(T==='quartel'&&A){if(k==='thp')return m*2.5;if(k==='tdmg')return m*1.6;}
   return m;}
 function statBase(b,k,d){
   switch(k){
-    case 'dmg':return d.dmg*(1+.35*lv(b,'dmg'))*(1+.08*pk('arsenal'))*(1+sy(b,'amp'))*(1+sy(b,'focus'))*(b.type==='core'&&C('furia')?2:1);
-    case 'range':return (d.range*(1+.12*lv(b,'range'))+(b.type==='core'&&C('furia')?1.5:0))*(EV('neblina')?.7:1);
-    case 'rate':return d.rate*(1+.18*lv(b,'rate'))*(1+.25*C('sobrecarga'))*(1+.15*sy(b,'cross'))*(1+.25*sy(b,'superc'))*(sy(b,'focus')?.65:1);
-    case 'income':return (d.income||0)*(1+.6*lv(b,'income'));
+    case 'dmg':return d.dmg*(1+.35*lv(b,'dmg'))*(1+.08*pk('arsenal'))*(b.type==='core'&&C('furia')?2:1);
+    case 'range':return (d.range*(1+.12*lv(b,'range'))+(b.type==='core'&&C('furia')?1.5:0))*(EV('neblina')?.7:1)*(1+(sy(b,'cmd')?.15:0));
+    case 'rate':return d.rate*(1+.18*lv(b,'rate'))*(1+.25*C('sobrecarga'))*(1+.15*sy(b,'cross'))*(1+.25*sy(b,'superc'))*(1+sy(b,'cmd'));
+    case 'income':return (d.income||0)*(1+.35*lv(b,'income'));
+    case 'wave':return b.type==='core'?(40+4*S.wave)*(1+.35*lv(b,'income')):(d.wave||0)*(1+.35*lv(b,'income'));
+    case 'cap':return 80+60*lv(b,'cofre');
+    case 'bounty':return .4+.15*lv(b,'pregao');
+    case 'burn':return stat(b,'dmg')*1.6*(1+.4*lv(b,'napalm'))*(1+.5*sy(b,'napalm'));
+    case 'troops':return 3+lv(b,'tropa');
+    case 'thp':return Math.round((55+6*S.wave)*(1+.35*lv(b,'treino')));
+    case 'tdmg':return (7+1.2*S.wave)*(1+.35*lv(b,'dmg'))*(1+sy(b,'cmd'));
     case 'reveal':return d.reveal+1.5*lv(b,'reveal');
     case 'maxhp':return Math.round(d.hp*(b.type==='core'?1+.15*pk('qg'):1)*(1+.35*lv(b,'armor')));
-    case 'detect':return !!(d.detect||lv(b,'detect'));
+    case 'detect':return !!(d.detect||lv(b,'detect')||sy(b,'cmdDet'));
     case 'pierce':return 2*lv(b,'pierce');
     case 'slowF':return Math.max(.2,.5-.1*lv(b,'chill'));
     case 'slowT':return 2+lv(b,'chill');
@@ -808,13 +836,40 @@ function statBase(b,k,d){
     case 'hits':return 1+lv(b,'rail');
     case 'chain':return 4+lv(b,'chainup');
     case 'poison':return stat(b,'dmg')*2*(1+.4*lv(b,'toxina'));
-    case 'aura':return d.aura+.5*lv(b,'campo');
-    case 'vuln':return .45+.1*lv(b,'campo');
+    case 'aura':return d.aura+.5*lv(b,'campo')+.75*lv(b,'raio');
+    case 'vuln':return .25+.08*lv(b,'campo');
+    case 'shred':return 3+2*lv(b,'quebra');
   }return d[k];}
-function upCost(b,k){const base=b.type==='core'?120:Math.max(25,(DEFS[b.type].cost||40)*.6);return Math.round(base*UPG[k].m*Math.pow(1.55,lv(b,k)));}
+function upCost(b,k){const base=b.type==='core'?120:Math.max(25,(DEFS[b.type].cost||40)*.6);return Math.round(base*UPG[k].m*Math.pow(1.55,lv(b,k))*(sy(b,'disc')?.85:1));}
 function upCount(b){let n=0;for(const k in b.u)n+=b.u[k];return n;}
 function sellVal(b){return Math.floor(b.spent*.6);}
-function income(){let s=0;for(const b of S.blds)s+=stat(b,'income');return s*(1+.1*pk('renda'))*(1-.15*C('sobrecarga'))*(DM('rico')?.6:1);}
+function updTroops(dt){
+  for(const b of S.blds){if(b.type!=='quartel')continue;const c=bc(b),n=stat(b,'troops'),RR=2.6*TILE,arch=sp(b,'b');
+    if(!b.troops)b.troops=[];while(b.troops.length<n){const i=b.troops.length;b.troops.push({x:c.x,y:c.y,hp:0,dead:true,resp:.5+i*.3,respT:8,atk:0,slot:i,hitT:0,ang:0,anim:0});}
+    const thp=stat(b,'thp'),tdmg=stat(b,'tdmg'),respT=8/(1+.35*lv(b,'treino'));
+    b.troops.forEach((t,i)=>{t.respT=respT;if(t.hitT>0)t.hitT-=dt;
+      if(t.dead){t.resp-=dt;if(t.resp<=0){t.dead=false;t.hp=t.maxhp=thp;t.x=c.x;t.y=c.y;t.tgt=null;S.fx.push({k:'ring',x:c.x,y:c.y,r:3,R:16,life:.3,max:.3,col:'200,210,255'});}return;}
+      if(t.maxhp!==thp){t.hp=t.hp/t.maxhp*thp;t.maxhp=thp;}
+      if(t.tgt&&(t.tgt.dead||t.tgt.under||Math.hypot(t.tgt.x-c.x,t.tgt.y-c.y)>RR+TILE))t.tgt=null;
+      if(!t.tgt){let best=null,bd=1e9;for(const e of S.ens){if(e.dead||e.under||e.fly||e.jumping||(!e.vis&&!arch))continue;const dc=Math.hypot(e.x-c.x,e.y-c.y);if(dc>RR+(arch?TILE:0))continue;
+          const taken=!arch&&e.blocker&&e.blocker!==t&&!e.blocker.dead&&e.blockT>0;const sc=dc+(taken?60:0);if(sc<bd){bd=sc;best=e;}}t.tgt=best;}
+      const e=t.tgt;
+      if(e){const dx=e.x-t.x,dy=e.y-t.y,d=Math.hypot(dx,dy)||1;t.ang=Math.atan2(dy,dx);const reach=arch?2.4*TILE:e.r+9;
+        if(d>reach){t.x+=dx/d*75*dt;t.y+=dy/d*75*dt;t.anim+=dt*8;}
+        else{if(!arch){e.blocker=t;e.blockT=.3;}t.atk-=dt;if(t.atk<=0){t.atk=arch?.8:.85;hurtE(e,arch?tdmg*.8:tdmg);t.swing=.2;
+          if(arch)S.fx.push({k:'line',x1:t.x,y1:t.y,x2:e.x,y2:e.y,life:.08,max:.08,w:1.5,col:'230,235,255'});}}}
+      else{const a=i/n*TAU+b.id,hx=c.x+Math.cos(a)*TILE*.9,hy=c.y+Math.sin(a)*TILE*.9,dx=hx-t.x,dy=hy-t.y,d=Math.hypot(dx,dy);if(d>3){t.x+=dx/d*Math.min(d,60*dt);t.y+=dy/d*Math.min(d,60*dt);t.ang=Math.atan2(dy,dx);t.anim+=dt*6;}}
+      if(t.swing>0)t.swing-=dt;});
+    if(b.troops.length>n)b.troops.length=n;}}
+function econMul(){return (1+.1*pk('renda'))*(1-.15*C('sobrecarga'))*(DM('rico')?.6:1);}
+function mineVal(b){return b.mineOut==null?220:b.mineOut;}
+function waveIncome(detail){let s=0;const L=[];const add=(b,v)=>{v=Math.round(v*econMul());if(v>0){s+=v;if(detail)L.push([b,v]);}};
+  for(const b of S.blds){if(b.dead)continue;
+    if(b.type==='core'||b.type==='casa')add(b,stat(b,'wave'));
+    else if(b.type==='mina')add(b,mineVal(b));
+    else if(b.type==='banco')add(b,Math.min(stat(b,'cap'),S.money*.12));}
+  return detail?L:s;}
+function income(){return waveIncome(false);}
 function cheb(x,y){return Math.max(Math.abs(x-CX),Math.abs(y-CY));}
 function canPlace(t,x,y){
   if(x<0||y<0||x>=COLS||y>=ROWS||S.grid[y][x])return false;
@@ -856,7 +911,10 @@ function startWave(){
   buildBeast();
 }
 function endWave(){
-  let bonus=15+S.wave*4;if(C('juros'))bonus+=Math.min(150,Math.floor(S.money*.1*C('juros')));S.money+=bonus;
+  let bonus=15+S.wave*4;if(C('juros'))bonus+=Math.min(150,Math.floor(S.money*.1*C('juros')));
+  const pay=waveIncome(true);let eco=0;for(const [b,v] of pay){eco+=v;const c=bc(b);S.texts.push({x:c.x,y:c.y-12,txt:'+$'+v,life:1.6,max:1.6,col:'#f5c542',big:b.type!=='casa'});S.beams.push({x:c.x,y:c.y,t:0,life:.7,col:0xffd23a});}
+  for(const b of S.blds)if(b.type==='mina')b.mineOut=Math.max(30,mineVal(b)-35);
+  S.money+=bonus+eco;bonus+=eco;if(eco)sfxCombo();
   S.phase='prep';S.prep=20;S.event=null;S.crates=[];S.nextEvent=rollEvent(S.wave+1);planSectors(S.wave+1);
   S.banner={txt:'Onda '+S.wave+' contida',sub:'+$'+bonus,life:2.2};
 }
@@ -890,7 +948,7 @@ function hurtB(b,a){
     S.shake=Math.min(8,S.shake+5);removeB(b);
   }}
 function hurtE(e,a,ign=0){
-  if(e.dead||e.under)return;const ar=Math.max(0,(EN[e.type].armor||0)+(EV('blindados')?3:0)-ign-(e.acidT>0?3:0));if(e.brittleT>0)a*=1.3;
+  if(e.dead||e.under)return;const ar=Math.max(0,(EN[e.type].armor||0)+(EV('blindados')?3:0)-ign-(e.acidT>0?3:0)-(e.markAr||0));if(e.brittleT>0)a*=1.3;
   if(C('executor')&&e.hp<e.maxhp*.3)a*=1.6;
   if(e.accel)a*=1+e.accel;
   if(ar)a=Math.max(a*.25,a-ar);
@@ -908,7 +966,8 @@ function hurtE(e,a,ign=0){
     sfxKill();
     if(d.first===10){S.slowmo=1.4;S.flash={col:'255,140,80',life:.5,max:.5};S.banner={txt:EN[e.type].name+' caiu!',sub:'',life:2.5};S.fx.push({k:'fire',x:e.x,y:e.y,R:4*TILE,life:.9,max:.9});
       for(let i=0;i<6;i++)S.fx.push({k:'ring',x:e.x,y:e.y,r:4,R:(1.5+i*.7)*TILE,life:.5+i*.12,max:.5+i*.12,col:'255,170,80',light:i?0:300});}
-    e.reward=Math.round(e.reward*(1+.5*C('risco'))*(EV('lua')?1.3:1))+C('almas');S.money+=e.reward;S.kills++;
+    {let bm=0;for(const pb of S.blds)if(pb.type==='posto'){const c=bc(pb);if(Math.hypot(e.x-c.x,e.y-c.y)<=7*TILE){const v=stat(pb,'bounty');if(v>bm)bm=v;}}e.postoB=bm;}
+    e.reward=Math.round(e.reward*(1+.5*C('risco'))*(EV('lua')?1.3:1)*(1+e.postoB))+C('almas');S.money+=e.reward;S.kills++;
     if(C('gelo')&&e.slowT>0)S.booms.push({x:e.x,y:e.y,dmg:(15+3*S.wave)*C('gelo')});
     if(C('acido')&&!e.fly)S.pools.push({x:e.x,y:e.y,R:1.1*TILE,life:4,dps:(6+S.wave)*C('acido')});
     if(d.boom)blast(e);
@@ -927,7 +986,6 @@ function nearestB(e,R){let best=null,bd=R;
 
 // ================= UPDATE =================
 function update(dt){
-  S.money+=income()*dt;
   if(S.shake>0)S.shake=Math.max(0,S.shake-dt*20);
   if(S.phase==='prep'){S.prep-=dt;S.prepEl=(S.prepEl||0)+dt;if(AUTO&&S.wave>0&&S.prepEl>=4&&!S.choosing&&!S.chestOpen)callWave();else if(S.prep<=0){S.prepEl=0;startWave();}}
   else{S.prepEl=0;S.waveT+=dt;while(S.queue.length&&S.queue[0].t<=S.waveT)spawn(S.queue.shift());
@@ -935,14 +993,17 @@ function update(dt){
   const radars=S.blds.filter(b=>b.type==='radar').map(b=>({c:bc(b),R:stat(b,'reveal')*TILE}));
   for(const f of S.flares)radars.push({c:{x:f.x,y:f.y},R:f.R});
   for(const k in S.ab)S.ab[k]=Math.max(0,S.ab[k]-dt*(1+.3*C('tatico')));
-  const accs=S.blds.filter(b=>b.type==='acel').map(b=>({c:bc(b),R:stat(b,'aura')*TILE,v:stat(b,'vuln')}));
+  const accs=S.blds.filter(b=>b.type==='marca').map(b=>({c:bc(b),R:stat(b,'aura')*TILE,v:stat(b,'vuln'),ar:stat(b,'shred')}));
 
   for(const e of S.ens){
     const d=EN[e.type];if(e.slowT>0)e.slowT-=dt;if(e.brittleT>0)e.brittleT-=dt;if(e.acidT>0)e.acidT-=dt;if(e.revealT>0)e.revealT-=dt;if(e.hitT>0)e.hitT-=dt;
     e.vis=!d.invis||e.revealT>0||radars.some(r=>Math.hypot(e.x-r.c.x,e.y-r.c.y)<=r.R);
-    e.accel=0;if(!e.under)for(const a of accs)if(Math.hypot(e.x-a.c.x,e.y-a.c.y)<=a.R&&a.v>e.accel)e.accel=a.v;
+    e.accel=0;e.markAr=0;if(!e.under)for(const a of accs)if(Math.hypot(e.x-a.c.x,e.y-a.c.y)<=a.R){if(a.v>e.accel)e.accel=a.v;if(a.ar>e.markAr)e.markAr=a.ar;}
+    if(e.burnT>0){e.burnT-=dt;hurtE(e,e.burnD*dt,e.burnIgn?99:0);if(e.dead)continue;if(Math.random()<dt*8)S.parts.push({x:e.x+rnd(-6,6),y:e.y+rnd(-6,6),vx:rnd(-8,8),vy:-30,life:.45,col:'#ff9a3a',sz:3});}else e.burnD=0;
+    if(e.blockT>0&&e.blocker&&!e.blocker.dead&&!e.fly&&!e.jumping){e.blockT-=dt;const bl=e.blocker;e.ang=Math.atan2(bl.y-e.y,bl.x-e.x);e.biting=true;e.anim+=dt*d.rate*6;e.atk-=dt;
+      if(e.atk<=0){e.atk=1/d.rate;bl.hp-=e.dmg;bl.hitT=.15;if(bl.hp<=0){bl.dead=true;bl.resp=bl.respT;burst(bl.x,bl.y,'#c8d2ff',10,100);}}continue;}
     if(e.poisonT>0){e.poisonT-=dt;hurtE(e,e.poisonD*dt,99);if(e.dead)continue;if(Math.random()<dt*3)S.parts.push({x:e.x+rnd(-5,5),y:e.y+rnd(-5,5),vx:0,vy:-18,life:.6,col:'#9fe84a',sz:2.5});}
-    const sp=e.speed*(e.slowT>0?e.slowF:1)*(e.accel?1.35:1);
+    const sp=e.speed*(e.slowT>0?e.slowF:1);
     let dx=CCX-e.x,dy=CCY-e.y;const dist=Math.hypot(dx,dy)||1;dx/=dist;dy/=dist;
     if(e.under){e.ang=Math.atan2(dy,dx);e.anim+=dt*sp/5;e.x+=dx*sp*1.15*dt;e.y+=dy*sp*1.15*dt;
       if(Math.random()<dt*14)S.parts.push({x:e.x+rnd(-6,6),y:e.y+rnd(-6,6),vx:rnd(-20,20),vy:rnd(-20,20),life:rnd(.3,.6),col:'#5a4428',sz:rnd(2,4)});
@@ -969,6 +1030,7 @@ function update(dt){
     if(tgt){e.biting=true;e.anim+=dt*d.rate*6;e.atk-=dt;if(e.atk<=0){e.atk=1/d.rate;hurtB(tgt,e.dmg);if(S.over)return;if(tgt.type==='muro'&&C('espinhos'))hurtE(e,e.dmg*.6*C('espinhos'));}}
     else{e.biting=false;e.anim+=dt*sp/5;e.x+=dx*sp*dt;e.y+=dy*sp*dt;}
   }
+  updTroops(dt);
   const E=S.ens;
   const CS=32,cells=new Map();
   for(let i=0;i<E.length;i++){const a=E[i];if(a.under||a.jumping||a.dead)continue;const k=((a.x/CS)|0)+((a.y/CS)|0)*100;let c=cells.get(k);if(!c){c=[];cells.set(k,c);}c.push(i);}
@@ -1002,7 +1064,7 @@ function update(dt){
     if(b.temp!=null){b.temp-=dt;if(b.temp<=0){expired.push(b);continue;}}
     if(b.popT>0)b.popT-=dt;if(b.spawnT>0)b.spawnT-=dt;if(b.critT>0)b.critT-=dt;
     const reg=.006*lv(b,'armor')+.01*C('nano');if(reg&&b.hp<b.maxhp)b.hp=Math.min(b.maxhp,b.hp+b.maxhp*reg*dt);
-    if(b.type==='gerador'&&C('arco')){b.zap=(b.zap||0)-dt;if(b.zap<=0){b.zap=1;const c=bc(b);let n=0;
+    if(b.type==='mina'&&C('arco')){b.zap=(b.zap||0)-dt;if(b.zap<=0){b.zap=1;const c=bc(b);let n=0;
       for(const e of S.ens){if(n>=3)break;if(!e.dead&&Math.hypot(e.x-c.x,e.y-c.y)<=3*TILE){hurtE(e,(10+2*S.wave)*C('arco'));n++;S.fx.push({k:'line',x1:c.x,y1:c.y,x2:e.x,y2:e.y,life:.12,max:.12,w:2,col:'255,240,150'});}}}}
     if(b.hp<b.maxhp*.35&&Math.random()<dt*4){const c=bc(b);S.parts.push({x:c.x+rnd(-8,8),y:c.y+rnd(-8,8),vx:rnd(-6,6),vy:rnd(-30,-15),life:rnd(.8,1.4),col:'rgba(60,60,60,.6)',sz:rnd(4,7),smoke:true});}
     if(!d.range)continue;
@@ -1048,7 +1110,12 @@ function update(dt){
   if(S.banner){S.banner.life-=dt;if(S.banner.life<=0)S.banner=null;}
   S.ens=S.ens.filter(e=>!e.dead);
 }
-function fire(b,e,c){
+function fireFlame(b,e,c){const R=stat(b,'range')*TILE,half=sp(b,'a')?.65:.42,dmg=stat(b,'dmg'),burn=stat(b,'burn'),ign=sp(b,'b');b.recoil=.6;
+  for(const o of S.ens){if(o.dead||o.under||o.fly)continue;const dx=o.x-c.x,dy=o.y-c.y,dd=Math.hypot(dx,dy);if(dd>R+o.r)continue;let da=Math.atan2(dy,dx)-b.ang;da=Math.atan2(Math.sin(da),Math.cos(da));
+    if(Math.abs(da)<=half||dd<o.r+10){hurtE(o,dmg);o.burnT=2.5;o.burnD=Math.max(o.burnD||0,burn);if(ign)o.burnIgn=true;}}
+  for(let k=0;k<5;k++){const a=b.ang+rnd(-half,half)*.8,v=R*rnd(1.6,2.6);S.parts.push({x:c.x+Math.cos(b.ang)*14,y:c.y+Math.sin(b.ang)*14,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:rnd(.28,.42),col:k%2?'#ffb84a':'#ff6a2a',sz:rnd(3,5.5)});}
+  if(Math.random()<.3)S.parts.push({x:c.x+Math.cos(b.ang)*R*.7,y:c.y+Math.sin(b.ang)*R*.7,vx:rnd(-10,10),vy:-25,life:.8,col:'rgba(50,40,35,.5)',sz:rnd(5,8),smoke:true});}
+function fire(b,e,c){if(b.type==='chama'){fireFlame(b,e,c);return;}
   const d=DEFS[b.type],len=b.type==='core'?24:b.type==='railgun'?20:16;let dmg=stat(b,'dmg');
   let crit=false;if(Math.random()<.07+.12*C('critico')+(DM('critico')?.15:0)+(b.type==='metral'&&sp(b,'b')?.2:0)){crit=true;dmg*=C('critico')?3:2.2;b.critT=.3;S.critFx=(S.critFx||0)+1;}
   const mx=c.x+Math.cos(b.ang)*len,my=c.y+Math.sin(b.ang)*len;b.recoil=1;
@@ -1465,14 +1532,18 @@ function setBuild(t){S.build=S.build===t?null:t;S.pending=null;if(S.build){S.sel
 function repairCost(){let m=0;for(const b of S.blds)m+=b.maxhp-b.hp;return Math.ceil(m*.15);}
 const fmt=v=>(Math.round(v*10)/10).toString().replace('.',',');
 function selLine(s){const d=DEFS[s.type],p=['Vida '+Math.ceil(s.hp)+'/'+s.maxhp];
-  if(stat(s,'income'))p.push('+'+fmt(stat(s,'income'))+' $/s');
+  if(s.type==='casa'||s.type==='core')p.push('+$'+Math.round(stat(s,'wave')*econMul())+' por onda');
+  if(s.type==='mina')p.push('Próxima onda: +$'+Math.round(mineVal(s)*econMul())+' (cai $35 por onda)');
+  if(s.type==='banco')p.push('Juros de 12% até $'+stat(s,'cap')+' · agora: +$'+Math.round(Math.min(stat(s,'cap'),S.money*.12)*econMul()));
+  if(s.type==='posto')p.push('+'+Math.round(stat(s,'bounty')*100)+'% de dinheiro por abate a até 7 casas');
+  if(s.type==='comando')p.push('Raio '+fmt(stat(s,'aura'))+' · torres +15% alcance e +'+Math.round((.15+.08*lv(s,'tambores'))*100)+'% cadência'+(lv(s,'radarc')?' · enxergam invisíveis':'')+(lv(s,'comercio')?' · 15% de desconto':''));
+  if(s.type==='marca')p.push('Raio '+fmt(stat(s,'aura'))+' · zumbis +'+Math.round(stat(s,'vuln')*100)+'% de dano e −'+stat(s,'shred')+' de armadura');
+  if(s.type==='chama')p.push('Queimadura '+Math.round(stat(s,'burn'))+'/s por 2,5 s');
+  if(s.type==='quartel')p.push(stat(s,'troops')+' soldados · vida '+stat(s,'thp')+' · dano '+Math.round(stat(s,'tdmg')));
   if(s.type==='radar')p.push('Revela num raio de '+fmt(stat(s,'reveal')));
-  if(s.type==='foco')p.push('+'+Math.round((.6+.1*lv(s,'lente'))*100)+'% de dano e −35% de cadência nas torres encostadas');
-  if(s.type==='acel')p.push('Raio '+fmt(stat(s,'aura'))+' · zumbis +35% rápidos e +'+Math.round(stat(s,'vuln')*100)+'% de dano recebido');
   if(s.type==='tesla')p.push('Pula para '+stat(s,'chain')+' zumbis (−20% por salto)');
   if(s.type==='veneno')p.push('Veneno '+Math.round(stat(s,'poison'))+'/s por 4 s, ignora armadura e passa para vizinhos');
-  if(s.type==='amp')p.push('+'+Math.round((.2+.05*lv(s,'power'))*100)+'% de dano nas torres encostadas (não soma com outro Amplificador)');
-  if(s.syn){const q=[];if(s.syn.amp)q.push('Amplificada +'+Math.round(s.syn.amp*100)+'%');if(s.syn.focus)q.push('Focada +'+Math.round(s.syn.focus*100)+'% dano');if(s.syn.thermal)q.push('Choque térmico');if(s.syn.superc)q.push('Supercondutor');if(s.syn.cross)q.push('Fogo cruzado');if(q.length)p.push('Sinergia: '+q.join(', '));}
+  if(s.syn){const q=[];if(s.syn.cmd)q.push('Sob comando');if(s.syn.napalm)q.push('Gás inflamável');if(s.syn.disc)q.push('15% de desconto');if(s.syn.thermal)q.push('Choque térmico');if(s.syn.superc)q.push('Supercondutor');if(s.syn.cross)q.push('Fogo cruzado');if(q.length)p.push('Sinergia: '+q.join(', '));}
   if(s.temp!=null)p.push('some em '+Math.ceil(s.temp)+' s');
   if(d.range){p.push('Dano '+Math.round(stat(s,'dmg')),'Alcance '+fmt(stat(s,'range')),fmt(stat(s,'rate'))+' tiros/s');
     p.push(d.air?'acerta voadores':'só terrestres');if(stat(s,'detect'))p.push('enxerga invisíveis');
@@ -1495,7 +1566,7 @@ function pickSpec(k){const s=S.sel;if(!s||s.spec||!SPECS[s.type]||upCount(s)<SPE
 function refreshUI(){
   if(!S)return;
   $('money').textContent=Math.floor(S.money);
-  $('inc').textContent=fmt(income());
+  $('inc').textContent=Math.round(income());
   $('wave').textContent=S.wave;
   $('xpFill').style.width=(S.xp/S.xpNeed*100)+'%';$('xpTxt').textContent='Nível '+S.lvl+' · '+Math.floor(S.xp)+'/'+S.xpNeed+' XP';
   const c=S.core;$('coreFill').style.width=Math.max(0,c.hp/c.maxhp*100)+'%';$('coreTxt').textContent='QG  '+Math.max(0,Math.ceil(c.hp))+' / '+c.maxhp;
@@ -1536,7 +1607,8 @@ function refreshUI(){
 function upgrade(k){const s=S.sel;if(!s||!TRACKS[s.type].includes(k)||lv(s,k)>=UPG[k].max)return;const cst=upCost(s,k);if(S.money<cst)return;
   S.money-=cst;s.spent+=cst;s.u[k]=lv(s,k)+1;
   if(k==='armor'){const nm=stat(s,'maxhp');s.hp+=nm-s.maxhp;s.maxhp=nm;}
-  if(k==='power')recalcSyn();
+  if(k==='veio')s.mineOut=220;
+  if(['raio','tambores','radarc','comercio','tropa','treino'].includes(k))recalcSyn();
   const c=bc(s);S.fx.push({k:'ring',x:c.x,y:c.y,r:6,R:40,life:.5,max:.5,col:'245,197,66',light:140});s.popT=.4;S.beams.push({x:c.x,y:c.y,t:0,life:.9,col:0xffd23a});
   for(let i=0;i<22&&S.parts.length<900;i++){const a=i/22*TAU;S.parts.push({x:c.x+Math.cos(a)*12,y:c.y+Math.sin(a)*12,vx:Math.cos(a)*25,vy:Math.sin(a)*25,life:rnd(.7,1.1),col:'#ffe27a',sz:3,soul:true});}
   S.texts.push({x:c.x,y:c.y,txt:UPG[k].name+' '+lv(s,k)+'/'+UPG[k].max,life:1.2,max:1.2,col:'#ffd23a',big:1});sfxLevel();refreshUI();}
@@ -1627,7 +1699,7 @@ function handleTap(ev,touch){
   if(cr){S.money+=cr.val;S.texts.push({x:cr.x,y:cr.y-10,txt:'+'+cr.val,life:1,col:'#f5c542'});burst(cr.x,cr.y,'#f5c542',10,90);cr.life=0;sfxTick();refreshUI();return;}
   if(S.ability){useAbility(S.ability,m.x,m.y);return;}
   if(S.build){const d=DEFS[S.build];
-    if(canPlace(S.build,x,y)&&S.money>=costOf(S.build)){S.money-=costOf(S.build);const nb=mkB(S.build,x,y);nb.spawnT=.45;addB(nb);for(let i=0;i<6;i++)puff((x+.5)*TILE+rnd(-12,12),(y+.5)*TILE+rnd(-12,12),rnd(-20,20),rnd(-20,20),'rgba(160,140,110,.5)',rnd(3,5));sfxTick();
+    const cAt=costAt(S.build,x,y);if(canPlace(S.build,x,y)&&S.money>=cAt){S.money-=cAt;const nb=mkB(S.build,x,y);nb.spent=cAt;nb.spawnT=.45;addB(nb);for(let i=0;i<6;i++)puff((x+.5)*TILE+rnd(-12,12),(y+.5)*TILE+rnd(-12,12),rnd(-20,20),rnd(-20,20),'rgba(160,140,110,.5)',rnd(3,5));sfxTick();
       S.fx.push({k:'ring',x:(x+.5)*TILE,y:(y+.5)*TILE,r:4,R:20,life:.3,max:.3,col:'126,217,87'});}
     refreshUI();return;}
   S.sel=(x>=0&&y>=0&&x<COLS&&y<ROWS)?S.grid[y][x]:null;refreshUI();
@@ -1697,7 +1769,7 @@ $('mBuild').addEventListener('click',ev=>{const b=ev.target.closest('.mb');if(b&
 $('mAbil').addEventListener('click',ev=>{const b=ev.target.closest('.ma');if(b)setAbility(b.dataset.ab);});
 function refreshMobile(){
   if(!document.body.classList.contains('m')||!S)return;
-  $('mMoney').textContent=Math.floor(S.money);$('mInc').textContent=fmt(income());$('mWave').textContent=S.wave;
+  $('mMoney').textContent=Math.floor(S.money);$('mInc').textContent=Math.round(income());$('mWave').textContent=S.wave;
   $('mXp').style.width=(S.xp/S.xpNeed*100)+'%';$('mXpTxt').textContent='Nv '+S.lvl;
   $('mCore').style.width=Math.max(0,S.core.hp/S.core.maxhp*100)+'%';
   const nb=$('mNext');if(S.phase==='prep'){nb.disabled=false;nb.textContent='Onda '+(S.wave+1)+' · '+Math.ceil(S.prep)+'s';}else{nb.disabled=true;nb.textContent=(S.ens.length+S.queue.length)+' zumbis';}
@@ -1863,13 +1935,24 @@ function makeBld(b){
     o.parts.orb=msh(G3.ico(.42),GL('#9cff7a',1.3),0,1.2,0,0,0,0,g);
     const t=new THREE.Group();t.position.y=.78;g.add(t);o.turret=t;const r=new THREE.Group();t.add(r);o.recoil=r;
     msh(G3.box(.7,.12,.09),MT('#cfd8cc',{metalness:.5}),.45,0,.12,0,0,0,r);msh(G3.box(.7,.12,.09),MT('#cfd8cc',{metalness:.5}),.45,0,-.12,0,0,0,r);
-  }else if(T==='fazenda'){
-    msh(G3.box(.92,.12,.92),MT('#5b4630'),0,.06,0,0,0,0,g);
-    for(let i=0;i<3;i++)for(let j=0;j<3;j++){msh(G3.cone(.09,.22,5),MT('#7cb342'),-.28+i*.28,.23,-.28+j*.28,0,i+j,0,g);}
-  }else if(T==='gerador'){
-    msh(G3.box(.8,.45,.8),MT('#34383f',{metalness:.4}),0,.225,0,0,0,0,g);
-    o.parts.spin=msh(G3.tor(.22,.05),GL('#f5c542',1.2),0,.62,0,Math.PI/2,0,0,g);msh(G3.sph(.13,8,6),GL('#fff2a8',1.6),0,.62,0,0,0,0,g);
-    for(let k=0;k<4;k++)msh(G3.box(.06,.3,.06),MT('#8a6a1c'),(k%2?.3:-.3),.6,(k<2?.3:-.3),0,0,0,g);
+  }else if(T==='casa'){
+    msh(G3.box(.86,.06,.86),MT('#4a3a28'),0,.03,0,0,0,0,g);msh(G3.box(.62,.42,.56),MT('#8a7458'),0,.27,0,0,0,0,g);
+    msh(new THREE.ConeGeometry(.56,.36,4),MT('#6a3424'),0,.66,0,0,Math.PI/4,0,g);msh(G3.box(.14,.24,.03),MT('#3a2818'),.0,.18,.29,0,0,0,g);
+    msh(G3.box(.12,.1,.03),GL('#ffc070',1.3),-.19,.32,.29,0,0,0,g);msh(G3.box(.12,.1,.03),GL('#ffc070',1.3),.19,.32,.29,0,0,0,g);msh(G3.box(.08,.22,.08),MT('#5a4a3a'),.18,.78,-.12,0,0,0,g);
+  }else if(T==='mina'){
+    msh(G3.box(.9,.1,.9),MT('#4a3e30'),0,.05,0,0,0,0,g);msh(G3.cyl(.26,.3,.06,14),MT('#0c0a08'),-.1,.11,0,0,0,0,g);
+    msh(G3.box(.07,.6,.07),MT('#6a4e30'),-.38,.35,0,0,0,0,g);msh(G3.box(.07,.6,.07),MT('#6a4e30'),.18,.35,0,0,0,0,g);msh(G3.box(.66,.08,.1),MT('#6a4e30'),-.1,.66,0,0,0,0,g);
+    msh(G3.box(.3,.16,.22),MT('#5a5048',{metalness:.5}),.26,.2,.24,0,0,0,g);for(let k=0;k<4;k++)msh(G3.sph(.06,8,6),GL('#f5c542',.9),.18+(k%2)*.12,.3,.2+(k>>1)*.08,0,0,0,g);
+    o.parts.float=msh(G3.oct(.09),GL('#ffe27a',1.6),-.1,.75,0,0,0,0,g);
+  }else if(T==='banco'){
+    msh(G3.box(.9,.1,.8),MT('#8a8478'),0,.05,0,0,0,0,g);msh(G3.box(.8,.06,.7),MT('#a8a294'),0,.13,0,0,0,0,g);
+    for(let k=0;k<4;k++)msh(G3.cyl(.05,.055,.42,10),MT('#d8d2c4'),-.27+k*.18,.37,.22,0,0,0,g);msh(G3.box(.7,.4,.34),MT('#bdb6a6'),0,.36,-.1,0,0,0,g);
+    msh(new THREE.ConeGeometry(.5,.18,4),MT('#9a9384'),0,.66,0,0,Math.PI/4,0,g);o.parts.spin=msh(G3.cyl(.14,.14,.03,20),GL('#f5c542',1.3),0,.92,0,Math.PI/2,0,0,g);
+  }else if(T==='posto'){
+    msh(G3.box(.88,.06,.88),MT('#4a3a28'),0,.03,0,0,0,0,g);msh(G3.box(.7,.3,.4),MT('#7a5a38'),0,.2,.1,0,0,0,g);
+    for(const [x,z] of[[-.32,.28],[.32,.28],[-.32,-.12],[.32,-.12]])msh(G3.box(.05,.62,.05),MT('#5a4228'),x,.36,z,0,0,0,g);
+    for(let k=0;k<4;k++)msh(G3.box(.19,.03,.5),MT(k%2?'#e8e0d0':'#b8402a'),-.29+k*.19,.68,.08,.18,0,0,g);
+    msh(G3.box(.2,.18,.2),MT('#8a6a40'),-.22,.12,-.28,0,0,0,g);msh(G3.box(.16,.14,.16),MT('#6a5030'),.24,.1,-.3,0,.4,0,g);o.parts.float=msh(G3.cyl(.08,.08,.025,16),GL('#ffd060',1.4),0,.48,.1,Math.PI/2,0,0,g);
   }else if(T==='radar'){
     msh(G3.box(.7,.18,.7),MT('#3e4a52'),0,.09,0,0,0,0,g);msh(G3.cyl(.05,.07,.55),MT('#9aa7ad'),0,.45,0,0,0,0,g);
     const s=new THREE.Group();s.position.y=.75;g.add(s);o.parts.spin=s;msh(new THREE.SphereGeometry(.3,10,6,0,Math.PI*2,0,Math.PI/2.5),MT('#e3ebef',{side:THREE.DoubleSide}),.05,0,0,0,0,-Math.PI/2.3,s);
@@ -1877,11 +1960,16 @@ function makeBld(b){
   }else if(T==='muro'){
     const m=b.temp!=null?MT('#8ab4d8',{transparent:true,opacity:.75}):MT('#8f8573');
     for(let r=0;r<2;r++)for(let k=0;k<(r?3:2);k++){const w=r?.29:.44;msh(G3.box(w,.24,.85),m,-.45+w/2+k*(w+.02)+(r?0:.01),.12+r*.25,0,0,0,0,g);}
-  }else if(T==='amp'||T==='foco'||T==='acel'){
-    msh(G3.box(.82,.2,.82),MT(T==='amp'?'#4a3a48':T==='foco'?'#4a4232':'#4a2a2a'),0,.1,0,0,0,0,g);
-    if(T==='amp'){o.parts.float=msh(G3.oct(.24),GL('#ff78c8',1.4),0,.75,0,0,0,0,g);o.parts.spin=msh(G3.tor(.32,.03),GL('#ff9ad8',1),0,.75,0,Math.PI/2,0,0,g);}
-    if(T==='foco'){msh(G3.cyl(.05,.07,.4),MT('#8a7a5a'),0,.4,0,0,0,0,g);o.parts.spin=msh(G3.cyl(.3,.3,.06,16),GL('#ffcf80',.9),0,.72,0,Math.PI/2,0,0,g);msh(G3.tor(.3,.035,6,16),MT('#c9a05a',{metalness:.6}),0,.72,0,0,Math.PI/2,0,o.parts.spin.parent);}
-    if(T==='acel'){const s=new THREE.Group();s.position.y=.35;g.add(s);o.parts.spin=s;for(let k=0;k<3;k++){const a=k*TAU/3;msh(G3.cone(.11,.28,3),GL('#ff5a4a',1.3),Math.cos(a)*.24,0,Math.sin(a)*.24,0,-a,-Math.PI/2,s);}msh(G3.sph(.1,8,6),GL('#ffd0c8',1.4),0,.35,0,0,0,0,g);}
+  }else if(T==='quartel'){
+    msh(G3.box(.9,.08,.9),MT('#3e4638'),0,.04,0,0,0,0,g);msh(G3.box(.7,.34,.5),MT('#5a6450'),0,.25,-.12,0,0,0,g);msh(G3.box(.76,.06,.56),MT('#3a4234'),0,.45,-.12,0,0,0,g);
+    msh(G3.box(.16,.2,.03),MT('#1e2418'),0,.18,.14,0,0,0,g);msh(G3.cyl(.02,.02,.8,6),MT('#9aa29a',{metalness:.6}),.36,.48,.3,0,0,0,g);
+    o.parts.flag=msh(G3.box(.26,.16,.02),MT('#3a6ad0'),.5,.78,.3,0,0,0,g);msh(G3.box(.05,.4,.05),MT('#c8ccd0',{metalness:.7}),-.25,.62,-.12,0,0,.6,g);msh(G3.box(.05,.4,.05),MT('#c8ccd0',{metalness:.7}),-.25,.62,-.12,0,0,-.6,g);
+  }else if(T==='comando'){
+    towerBase(g);msh(G3.cyl(.07,.09,.75,8),MT('#5a6a52'),0,.66,0,0,0,0,g);msh(G3.box(.3,.2,.3),MT('#3a4434',{metalness:.3}),0,.45,0,0,0,0,g);
+    o.parts.flag=msh(G3.box(.32,.2,.02),MT('#7ed957'),.18,.92,0,0,0,0,g);o.parts.spin=msh(G3.tor(.36,.025,6,24),GL('#7ed957',1.1),0,.36,0,Math.PI/2,0,0,g);
+  }else if(T==='marca'){
+    msh(G3.box(.8,.12,.8),MT('#2e2438'),0,.06,0,0,0,0,g);msh(new THREE.CylinderGeometry(.06,.2,.75,4),MT('#3a2c4a',{metalness:.3}),0,.5,0,0,Math.PI/4,0,g);
+    o.parts.float=msh(G3.sph(.11,12,8),GL('#c86eff',1.8),0,1.05,0,0,0,0,g);o.parts.spin=msh(G3.tor(.3,.02,6,24),GL('#b060ff',1),0,.25,0,Math.PI/2,0,0,g);
   }else{
     towerBase(g);const r=tur();
     if(T==='metral'){msh(G3.box(.3,.22,.3),MT('#7d888c',{metalness:.5}),0,.11,0,0,0,0,r);msh(G3.cyl(.035,.035,.5,6),MT('#d5dcd2',{metalness:.7}),.3,.14,.08,0,0,Math.PI/2,r);msh(G3.cyl(.035,.035,.5,6),MT('#d5dcd2',{metalness:.7}),.3,.14,-.08,0,0,Math.PI/2,r);msh(G3.box(.14,.14,.18),MT('#4b5248'),-.18,.1,.16,0,0,0,r);}
@@ -1889,6 +1977,7 @@ function makeBld(b){
     if(T==='canhao'){msh(G3.box(.42,.3,.42),MT('#9a7a50'),0,.15,0,0,0,0,r);msh(G3.cyl(.11,.13,.55,10),MT('#5d5f5a',{metalness:.6}),.33,.2,0,0,0,Math.PI/2,r);msh(G3.tor(.13,.04,5,10),MT('#3d3f3b'),.6,.2,0,0,Math.PI/2,0,r);}
     if(T==='railgun'){msh(G3.box(.32,.24,.32),MT('#5e2a7a',{metalness:.5}),0,.12,0,0,0,0,r);msh(G3.box(.7,.05,.06),MT('#e0e0e6',{metalness:.8}),.35,.18,.07,0,0,0,r);msh(G3.box(.7,.05,.06),MT('#e0e0e6',{metalness:.8}),.35,.18,-.07,0,0,0,r);o.parts.charge=msh(G3.box(.6,.03,.03),GL('#d68cff',1.5),.38,.18,0,0,0,0,r);}
     if(T==='tesla'){g.remove(o.turret);o.turret=null;for(let k=0;k<4;k++)msh(G3.tor(.2-k*.03,.04,5,12),MT(k%2?'#9a7a3a':'#c9a05a',{metalness:.7}),0,.4+k*.13,0,Math.PI/2,0,0,g);msh(G3.cyl(.05,.05,.6),MT('#5a4a2a'),0,.6,0,0,0,0,g);o.parts.orb=msh(G3.sph(.13,10,8),GL('#9fe4ff',1.6),0,1.0,0,0,0,0,g);}
+    if(T==='chama'){msh(G3.cyl(.16,.18,.36,12),MT('#8a2a1a',{metalness:.5}),-.06,.18,0,0,0,0,r);msh(G3.cyl(.05,.08,.38,8),MT('#3a3a3a',{metalness:.7}),.26,.16,0,0,0,Math.PI/2,r);o.parts.pilot=msh(G3.sph(.04,6,4),GL('#ffb040',2.2),.47,.16,0,0,0,0,r);msh(G3.box(.12,.2,.12),MT('#5a5a52'),-.06,.4,0,0,0,0,r);}
     if(T==='veneno'){msh(G3.cyl(.2,.22,.4,10),MT('#3f6a24',{metalness:.3}),0,.2,0,0,0,0,r);msh(G3.sph(.2,10,6),GL('#9fe84a',.6),0,.42,0,0,0,0,r);msh(G3.cyl(.05,.07,.32,6),MT('#5a6a48'),.3,.22,0,0,0,Math.PI/2,r);}
   }
   g.traverse(m=>{if(m.isMesh){m.userData.baseMat=m.material;}});
@@ -1902,7 +1991,9 @@ function syncBld(now){
     const c=bc(b);o.g.position.set(WX(c.x),0,WZ(c.y));
     if(o.turret)o.turret.rotation.y=-b.ang;
     if(o.recoil)o.recoil.position.x=-(b.recoil||0)*.09;
-    if(o.parts.spin)o.parts.spin.rotation.y=now*(b.type==='radar'?1.6:b.type==='acel'?2.4:1.2)+b.id;
+    if(o.parts.spin)o.parts.spin.rotation.y=now*(b.type==='radar'?1.6:b.type==='marca'?2.4:1.2)+b.id;
+    if(o.parts.flag){o.parts.flag.rotation.y=Math.sin(now*3+b.id)*.25;}
+    if(o.parts.pilot)o.parts.pilot.scale.setScalar(.8+.4*Math.random());
     if(o.parts.float)o.parts.float.position.y=.75+Math.sin(now*2+b.id)*.06;
     if(o.parts.orb){const s=1+.08*Math.sin(now*3+b.id);o.parts.orb.scale.setScalar(s);o.parts.orb.rotation.y=now;}
     if(o.parts.charge){const ch=Math.max(.1,1-Math.max(0,b.cool)*stat(b,'rate'));o.parts.charge.scale.set(1,ch*1.6+.2,ch*1.6+.2);}
@@ -1973,6 +2064,7 @@ const CREA={
 };
 const SHIELDG=(()=>{const L=[];pt(L,G3.cyl(.2,.2,.04,12),'#c0a040',[.24,.44,0],[0,0,Math.PI/2]);pt(L,G3.sph(.05,6,4),'#806020',[.27,.44,0]);pt(L,G3.tor(.19,.015,4,14),'#806020',[.25,.44,0],[0,Math.PI/2,0]);return merge(L);})();
 const IM={},MAXI=420;
+
 function rimify(m,k,tint){m.onBeforeCompile=sh=>{sh.fragmentShader=sh.fragmentShader.replace('#include <output_fragment>',
   '{float fr=pow(1.0-saturate(dot(normal,normalize(vViewPosition))),2.6);outgoingLight+=(diffuseColor.rgb*.6+vec3('+tint+'))*fr*'+k.toFixed(2)+';}\n#include <output_fragment>');};m.customProgramCacheKey=()=>'rim'+k+tint;return m;}
 const lamb=QI?grime(rimify(new THREE.MeshStandardMaterial({vertexColors:true,roughness:.55,metalness:.05,envMapIntensity:.45}),.9,'.10,.16,.30'),.42,11):new THREE.MeshLambertMaterial({vertexColors:true});
@@ -1985,6 +2077,16 @@ for(const t in CREA){const B=[],E=[];CREA[t](B,E);CGEO[t]={b:lumpy(merge(B),t===
   const body=new THREE.InstancedMesh(CGEO[t].b,t==='invisivel'?wraithM:lamb,MAXI),eyes=new THREE.InstancedMesh(CGEO[t].e,eyeM,MAXI);
   body.castShadow=SHADOW&&t!=='invisivel';body.frustumCulled=eyes.frustumCulled=false;body.instanceMatrix.setUsage(THREE.DynamicDrawUsage);eyes.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
   for(let i=0;i<MAXI;i++)body.setColorAt(i,new THREE.Color(1,1,1));body.count=eyes.count=0;SC.add(body);SC.add(eyes);IM[t]={body,eyes};}
+const TROOPG=(()=>{const B=[];pt(B,B_.box(.08,.26,.08),'#2c3240',[0,.13,.06]);pt(B,B_.box(.08,.26,.08),'#2c3240',[0,.13,-.06]);pt(B,B_.box(.17,.26,.24),'#5a6a8a',[0,.39,0]);
+  pt(B,B_.sph(.085,10,8),'#d8b090',[0,.6,0]);pt(B,B_.sph(.095,10,6),'#8a95a8',[-.005,.64,0],[0,0,0],[1,.75,1]);pt(B,B_.box(.03,.24,.2),'#3a5aa8',[.05,.38,.16]);
+  pt(B,B_.box(.36,.035,.035),'#d0d6e0',[.2,.42,-.16]);pt(B,B_.box(.04,.08,.08),'#7a5a30',[.03,.42,-.16]);return merge(B);})();
+const troopIM=new THREE.InstancedMesh(TROOPG,lamb,80);troopIM.count=0;troopIM.castShadow=SHADOW;troopIM.frustumCulled=false;SC.add(troopIM);
+for(let i=0;i<80;i++)troopIM.setColorAt(i,new THREE.Color(1,1,1));
+function syncTroops(now){let n=0;for(const b of S.blds){if(b.type!=='quartel'||!b.troops)continue;const knight=sp(b,'a'),arch=sp(b,'b');
+  for(const t of b.troops){if(t.dead||n>=80)continue;const bob=Math.abs(Math.sin(t.anim||0))*.03,sw=t.swing>0?Math.sin(t.swing/.2*Math.PI)*.5:0;
+    DUM.position.set(WX(t.x),bob,WZ(t.y));DUM.rotation.set(0,-t.ang,sw*.3);DUM.scale.setScalar(knight?1.15:1);DUM.updateMatrix();troopIM.setMatrixAt(n,DUM.matrix);
+    if(t.hitT>0)TC.setRGB(2,.6,.6);else if(knight)TC.setRGB(1.25,1.15,.75);else if(arch)TC.setRGB(.8,1.15,.8);else TC.setRGB(1,1,1);troopIM.setColorAt(n,TC);n++;}}
+  troopIM.count=n;troopIM.instanceMatrix.needsUpdate=true;if(troopIM.instanceColor)troopIM.instanceColor.needsUpdate=true;}
 const shieldIM=new THREE.InstancedMesh(SHIELDG,QI?new THREE.MeshStandardMaterial({vertexColors:true,metalness:.75,roughness:.32}):new THREE.MeshLambertMaterial({vertexColors:true}),120);shieldIM.count=0;shieldIM.frustumCulled=false;SC.add(shieldIM);
 const moundIM=new THREE.InstancedMesh(new THREE.SphereGeometry(.3,9,5,0,TAU,0,Math.PI/2),new THREE.MeshStandardMaterial({color:0x5a4428,roughness:1}),80);moundIM.count=0;moundIM.frustumCulled=false;SC.add(moundIM);
 const blobIM=new THREE.InstancedMesh(new THREE.CircleGeometry(.3,12),new THREE.MeshBasicMaterial({color:0,transparent:true,opacity:.35,depthWrite:false}),MAXI*2);blobIM.count=0;blobIM.frustumCulled=false;blobIM.renderOrder=2;SC.add(blobIM);
@@ -2098,7 +2200,7 @@ function syncEnemies(now){
     if(e.biting){DUM.position.x+=Math.cos(e.ang)*Math.max(0,Math.sin(e.anim*2))*.07;DUM.position.z+=Math.sin(e.ang)*Math.max(0,Math.sin(e.anim*2))*.07;}
     DUM.scale.setScalar(s*(1+.15*jk));DUM.updateMatrix();im.body.setMatrixAt(i,DUM.matrix);im.eyes.setMatrixAt(i,DUM.matrix);
     if(e.shield>0&&ns<120)shieldIM.setMatrixAt(ns++,DUM.matrix);
-    if(e.hitT>0)TC.setRGB(2.2,.7,.7);else if(e.slowT>0)TC.setRGB(.75,1.05,1.6);else if(e.poisonT>0)TC.setRGB(.8,1.5,.6);else if(e.accel)TC.setRGB(1.35,.85,.8);else TC.setRGB(1,1,1);
+    if(e.hitT>0)TC.setRGB(2.2,.7,.7);else if(e.slowT>0)TC.setRGB(.75,1.05,1.6);else if(e.poisonT>0)TC.setRGB(.8,1.5,.6);else if(e.burnT>0)TC.setRGB(1.6,.9,.55);else if(e.accel)TC.setRGB(1.15,.85,1.4);else TC.setRGB(1,1,1);
     im.body.setColorAt(i,TC);
     DUM.position.set(x,.02,z);DUM.rotation.set(-Math.PI/2,0,0);const bs=s*(e.fly?.75:1)*(1-jk*.3);DUM.scale.set(bs,bs,1);DUM.updateMatrix();blobIM.setMatrixAt(nb++,DUM.matrix);}
   for(const d0 of S.dying){if(REAL.dying.has(d0))continue;const t=d0.type,im=IM[t];const i=cnt[t]=(cnt[t]||0);if(i>=MAXI)continue;cnt[t]++;const L=d0.boss?1.6:.85,k=Math.min(1,d0.t/L),s=d0.r/11*1.35;
@@ -2187,7 +2289,7 @@ function drawDyn(now){
     dc.globalCompositeOperation='source-over';}
   for(const d0 of S.decals){dc.globalAlpha=Math.min(1,d0.life/d0.max*1.5)*(NIGHT?.4:.6);dc.fillStyle=d0.col;for(const b of d0.blobs){rg2(d0.x+b.dx,d0.y+b.dy,b.r);dc.fill();}}dc.globalAlpha=1;
   for(const pl of S.pools){dc.globalAlpha=Math.min(1,pl.life)*.5;dc.fillStyle='#7fbf1a';rg2(pl.x,pl.y,pl.R);dc.fill();}dc.globalAlpha=1;
-  for(const b of S.blds)if(b.type==='acel'){const c=bc(b),R=stat(b,'aura')*TILE;dc.fillStyle='rgba(255,70,50,.08)';rg2(c.x,c.y,R);dc.fill();dc.setLineDash([10,8]);dc.strokeStyle='rgba(255,90,70,.45)';dc.lineWidth=3;dc.stroke();dc.setLineDash([]);}
+  for(const b of S.blds)if(b.type==='marca'){const c=bc(b),R=stat(b,'aura')*TILE;dc.fillStyle='rgba(170,80,255,.08)';rg2(c.x,c.y,R);dc.fill();dc.setLineDash([10,8]);dc.strokeStyle='rgba(190,110,255,.45)';dc.lineWidth=3;dc.stroke();dc.setLineDash([]);}
   for(const [a,b,col] of S.links){const p=bc(a),q=bc(b);dc.strokeStyle=`rgba(${col},${.5+.25*Math.sin(now*3)})`;dc.lineWidth=6;dc.beginPath();dc.moveTo(p.x,p.y);dc.lineTo(q.x,q.y);dc.stroke();}
   for(const f of S.fx){const a=f.life/f.max;
     if(f.k==='ring'){dc.strokeStyle=`rgba(${f.col},${a})`;dc.lineWidth=5;rg2(f.x,f.y,f.r+(f.R-f.r)*(1-a));dc.stroke();}
@@ -2199,8 +2301,8 @@ function drawDyn(now){
   for(const e of S.ens)if(EN[e.type].invis&&e.vis&&!e.dead){dc.strokeStyle='rgba(255,111,224,.8)';dc.lineWidth=3;dc.setLineDash([6,6]);rg2(e.x,e.y,e.r*1.6);dc.stroke();dc.setLineDash([]);}
   const sel=S.sel;
   if(sel){const c=bc(sel);dc.strokeStyle='#fff';dc.lineWidth=4;dc.strokeRect(sel.x*TILE+2,sel.y*TILE+2,sel.w*TILE-4,sel.h*TILE-4);
-    if(DEFS[sel.type].range)ring2(c.x,c.y,stat(sel,'range')*TILE,'255,255,255');if(sel.type==='radar')ring2(c.x,c.y,stat(sel,'reveal')*TILE,'92,200,255');if(sel.type==='acel')ring2(c.x,c.y,stat(sel,'aura')*TILE,'255,90,70');
-    if(sel.type==='amp'||sel.type==='foco'){dc.strokeStyle='rgba(255,150,200,.9)';for(const [dx2,dy2] of[[1,0],[-1,0],[0,1],[0,-1]])dc.strokeRect((sel.x+dx2)*TILE+4,(sel.y+dy2)*TILE+4,TILE-8,TILE-8);}}
+    if(DEFS[sel.type].range)ring2(c.x,c.y,stat(sel,'range')*TILE,'255,255,255');if(sel.type==='radar')ring2(c.x,c.y,stat(sel,'reveal')*TILE,'92,200,255');if(sel.type==='marca')ring2(c.x,c.y,stat(sel,'aura')*TILE,'190,110,255');if(sel.type==='comando')ring2(c.x,c.y,stat(sel,'aura')*TILE,'126,217,87');if(sel.type==='posto')ring2(c.x,c.y,7*TILE,'255,190,90');if(sel.type==='quartel')ring2(c.x,c.y,2.6*TILE,'200,210,255');
+  }
   if(S.pending){dc.strokeStyle='#fff';dc.lineWidth=3;dc.setLineDash([6,6]);rg2(S.pending.px,S.pending.py,TILE*.75);dc.stroke();dc.setLineDash([]);}
   if(S.ability&&S.mouse){const a=ABIL[S.ability];ring2(S.mouse.x,S.mouse.y,a.r*TILE,S.ability==='gelo'||S.ability==='flare'?'150,220,255':'255,95,74');}
   if(S.build&&S.hover){const {x,y}=S.hover,ok=canPlace(S.build,x,y)&&S.money>=costOf(S.build);dc.fillStyle=ok?'rgba(126,217,87,.45)':'rgba(255,95,74,.45)';dc.fillRect(x*TILE,y*TILE,TILE,TILE);
@@ -2247,7 +2349,8 @@ function drawOverlay(now){
   ctx.setTransform(ODPR,0,0,ODPR,0,0);ctx.clearRect(0,0,OW,OH);
   const zoomK=Math.min(1.6,Math.max(.55,26/C3.d));
   const bar=(x,y,w,f,col)=>{ctx.fillStyle='rgba(0,0,0,.65)';ctx.fillRect(x-w/2-1,y-1,w+2,5);ctx.fillStyle=col||(f>.5?'#7ed957':f>.25?'#f5c542':'#ff5f4a');ctx.fillRect(x-w/2,y,w*Math.max(0,f),3);};
-  {const BG=[],G={'#7ed957':[],'#f5c542':[],'#ff5f4a':[],'#8fc4ff':[]};
+  {const BG=[],G={'#7ed957':[],'#f5c542':[],'#ff5f4a':[],'#8fc4ff':[],'#a8c0ff':[]};
+  for(const b of S.blds)if(b.troops)for(const t of b.troops){if(t.dead||t.hp>=t.maxhp)continue;const p=proj(t.x,t.y,.85);if(!p.ok)continue;const w=14;BG.push(p.x-w/2-1,p.y-1,w+2);G['#a8c0ff'].push(p.x-w/2,p.y,w*Math.max(0,t.hp/t.maxhp));}
   for(const e of S.ens){if(e.dead||e.under)continue;if(!(e.hp<e.maxhp||e.shield>0))continue;if(EN[e.type].invis&&!e.vis)continue;
     const h=(e.fly?1.15:0)+.95*e.r/11,p=proj(e.x,e.y,h);if(!p.ok||p.x<-30||p.x>OW+30||p.y<-10||p.y>OH+10)continue;const w=Math.max(14,e.r*1.6*zoomK);
     if(e.hp<e.maxhp){const f=Math.max(0,e.hp/e.maxhp);BG.push(p.x-w/2-1,p.y-1,w+2);G[f>.5?'#7ed957':f>.25?'#f5c542':'#ff5f4a'].push(p.x-w/2,p.y,w*f);}
@@ -2287,7 +2390,7 @@ function render3D(now){
   if(!S)return;const t=now/1000;if(lastNight!==NIGHT){lastNight=NIGHT;setNight3();}if(DEBUG){R3.info.autoReset=false;R3.info.reset();}
   let sx=0,sz=0;if(S.shake>0){sx=rnd(-1,1)*S.shake*.02;sz=rnd(-1,1)*S.shake*.02;}
   CAMR.position.x+=sx;CAMR.position.z+=sz;
-  let t0=pfT();syncBld(t);syncEnemies(t);pfAdd('ens',pfT()-t0);t0=pfT();syncFx(t);syncTowerLights();pfAdd('fx',pfT()-t0);t0=pfT();if(!MOB3||(dynTick++&1)===0)drawDyn(t);pfAdd('dyn',pfT()-t0);
+  let t0=pfT();syncBld(t);syncEnemies(t);syncTroops(t);pfAdd('ens',pfT()-t0);t0=pfT();syncFx(t);syncTowerLights();pfAdd('fx',pfT()-t0);t0=pfT();if(!MOB3||(dynTick++&1)===0)drawDyn(t);pfAdd('dyn',pfT()-t0);
   ENVU.time.value=t;SC.fog.near=C3.d*.75+4;SC.fog.far=C3.d*2.1+26;
   if(MIST)for(const m of MIST){m.material.map.offset.x=t*m.userData.sp;m.material.map.offset.y=t*m.userData.sp*.6;}
   if(DUST){const P=DUST.p,B=DUST.base,Sd=DUST.seed;for(let i=0;i<Sd.length;i++){const k=Sd[i];P[i*3]=B[i*3]+Math.sin(t*.3+k)*.8;P[i*3+1]=B[i*3+1]+Math.sin(t*.7+k*2)*.25;P[i*3+2]=B[i*3+2]+Math.cos(t*.25+k)*.8;}
